@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+../.venv
+../.env
+../.env.local
+
+# mac
+.DS_Store
+**/.DS_Store
+
+# PyCharm project settings
+.idea/
+.idea
