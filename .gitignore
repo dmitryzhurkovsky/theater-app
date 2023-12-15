@@ -5,9 +5,9 @@ __pycache__/
 
 # Environments
 .env
-../.venv
-../.env
-../.env.local
+backend/.venv
+backend/.env
+backend/.env.local
 
 # mac
 .DS_Store
