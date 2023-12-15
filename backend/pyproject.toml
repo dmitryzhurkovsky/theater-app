@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "theater-backend"
+version = "0.1.0"
+description = ""
+authors = ["Maksim  Suprun <ms.pydev@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+fastapi = "^0.104.1"
+uvicorn = "^0.24.0.post1"
+pydantic = {extras = ["email"], version = "^2.5.1"}
+pydantic-settings = "^2.1.0"
+sqlalchemy = "^2.0.23"
+alembic = "^1.13.0"
+psycopg2 = "^2.9.9"
+asyncpg = "^0.29.0"
+greenlet = "^3.0.2"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.3.2"
+ruff = "^0.0.269"
+black = "^23.3.0"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+select = []
+ignore = []
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
