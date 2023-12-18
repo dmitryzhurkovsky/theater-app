@@ -10,8 +10,8 @@ settings = get_settings()
 
 # initializing FastAPI app
 app = FastAPI(
-    title="Theater App",
-    swagger_ui_parameters={"syntaxHighlight.theme": "obsidian"},
+    title=settings.PROJECT_NAME,
+    swagger_ui_parameters=settings.SWAGGER_UI_PARAMETERS,
     debug=settings.DEBUG,
     version=settings.VERSION,
 )

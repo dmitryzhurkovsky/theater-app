@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -6,6 +8,10 @@ class Settings(BaseSettings):
 
     DEBUG: bool = True
 
+    PROJECT_NAME: str = "FastAPI"
+
+    SWAGGER_UI_PARAMETERS: dict[str, Any] = {}
+
     POSTGRES_HOST: str
     POSTGRES_PORT: str
     POSTGRES_USER: str
@@ -13,7 +19,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_ASYNC_URL: str
 
-    SUPPORTED_LANG: list[str]
+    SUPPORTED_LANGUAGES: list[str]
     SECRET_KEY: str | None = None
 
     model_config = SettingsConfigDict(extra="ignore")

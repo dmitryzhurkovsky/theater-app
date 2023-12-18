@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class TheatricalRole(BaseModel):
     name: Mapped[str]
-    actor: Mapped[list["User"]] = relationship(
+    actors: Mapped[list["User"]] = relationship(
         secondary="user_theatrical_role_relationship",
         back_populates='theatrical_role'
     )
