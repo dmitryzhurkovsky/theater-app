@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING
+
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
-
-from backend.src.models import BaseModel, TimestampAbstractModel
+from src.models import BaseModel, TimestampAbstractModel
 
 if TYPE_CHECKING:
-    from backend.src.models.theatrical_roles import TheatricalRole
+    from src.models.theatrical_roles import TheatricalRole
 
 
 class Performance(BaseModel, TimestampAbstractModel):

@@ -1,31 +1,46 @@
 [tool.poetry]
-name = "theater-backend"
+name = "theater backend"
 version = "0.1.0"
 description = ""
-authors = ["Maksim  Suprun <ms.pydev@gmail.com>"]
+authors = ["Maksim  Suprun <ms.pydev@gmail.com>", "Artur Leshko <artur.leshko.01@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
-fastapi = "^0.104.1"
-uvicorn = "^0.24.0.post1"
-pydantic = {extras = ["email"], version = "^2.5.1"}
-pydantic-settings = "^2.1.0"
-sqlalchemy = "^2.0.23"
-alembic = "^1.13.0"
-psycopg2 = "^2.9.9"
-asyncpg = "^0.29.0"
-greenlet = "^3.0.2"
+fastapi = "==0.104.1"
+uvicorn = "==0.24.0.post1"
+pydantic = {extras = ["email"], version = "==2.5.1"}
+pydantic-settings = "==2.1.0"
+sqlalchemy = "==2.0.23"
+alembic = "==1.13.0"
+asyncpg = "==0.29.0"
+greenlet = "==3.0.2"
+psycopg2-binary = "==2.9.4"
+asgi-correlation-id = "==4.2.0"
+structlog = "22.3.0"
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.3.2"
-ruff = "^0.0.269"
-black = "^23.3.0"
+pre-commit = "==3.3.2"
+ruff = "==0.0.269"
+black = "==23.1.0"
+isort = "==5.12.0"
+pytest = "==7.2.1"
+pytest-asyncio = "==0.20.3"
+pytest-cov = "==4.0.0"
+pytest-mock = "==3.10.0"
 
 [tool.ruff]
 line-length = 120
 target-version = "py311"
 select = []
 ignore = []
+
+[tool.pytest.ini_options]
+addopts = "-v -rsxX -l --tb=short --strict-markers"
+asyncio_mode = "auto"
+filterwarnings = []
+markers = ["pytest.mark.asyncio"]
+minversion = "6.0"
+testpaths = ["tests"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

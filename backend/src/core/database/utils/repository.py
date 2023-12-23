@@ -3,8 +3,7 @@ from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
-
-from backend.src.core.database.db import postgres_async_session
+from src.core.database.db import postgres_async_session
 
 
 class AbstractRepository(ABC):

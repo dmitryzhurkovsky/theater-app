@@ -6,7 +6,6 @@ __pycache__/
 # Environments
 .env
 *.venv*
-*.env*
 *.env.local*
 *.env.deploy*
 
@@ -17,3 +16,6 @@ __pycache__/
 # PyCharm project settings
 .idea/
 .idea
+
+.python-version
+.docker/

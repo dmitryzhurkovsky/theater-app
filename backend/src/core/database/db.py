@@ -1,14 +1,11 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-
-from backend.src.core.config.settings import get_settings
-
-settings = get_settings()
+from src.core.config.settings import settings
 
 postgres_async_engine = create_async_engine(
-    url=settings.POSTGRES_ASYNC_URL,
-    pool_size=58,
-    max_overflow=0,
-    echo=False,
+    url=settings.DB_PRIMARY,
+    pool_size=settings.DB_POOL_SIZE,
+    max_overflow=settings.DB_MAX_OVERFLOW,
+    echo=settings.DB_ECHO,
 )
 
 postgres_async_session = async_sessionmaker(
