@@ -10,8 +10,8 @@ class RequestLogUser(BaseModel):
 
 
 class RequestLogClientSchema(BaseModel):
-    ip: str | None
-    port: str | None
+    ip: str | int | None
+    port: str | int | None
 
 
 class RequestLogHttpSchema(BaseModel):
@@ -31,9 +31,9 @@ class RequestLogSchema(BaseModel):
     query_params: dict | None
     path_params: dict | None
     body_json: dict | None
-    body_json_normalised: dict | None
+    body_json_normalised: dict | None = None
 
-    @model_validator(mode="before")
+    @model_validator(mode="after")
     def set_body_normalised(self) -> Self:
         if self.body_json is not None:
             self.body_json_normalised = normalise_dict(self.body_json)

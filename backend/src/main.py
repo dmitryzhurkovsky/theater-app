@@ -37,5 +37,5 @@ async def startup_event():
     uvicorn_error_logger.disabled = True
 
     Logger(
-        json_logs=settings.LOG.LOG_JSON_FORMAT, log_level=settings.LOG.LOG_LEVEL
+        json_logs=settings.LOG_JSON_FORMAT, log_level=settings.LOG_LEVEL
     ).setup_logging()

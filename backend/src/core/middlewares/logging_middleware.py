@@ -5,7 +5,11 @@ import structlog
 from asgi_correlation_id.context import correlation_id
 from fastapi import Request, Response
 from src.core.config.settings import settings
-from src.core.schemas import RequestLogClientSchema, RequestLogHttpSchema, RequestLogSchema
+from src.core.schemas import (
+    RequestLogClientSchema,
+    RequestLogHttpSchema,
+    RequestLogSchema
+)
 
 ACC_LOG = structlog.stdlib.get_logger("api.access")
 ERR_LOG = structlog.stdlib.get_logger("api.error")
@@ -38,7 +42,7 @@ async def logging_middleware(request: Request, call_next) -> Response:
             _prepare_log_message(request, response),
             **(
                 await _prepare_log_body(request, response, request_id, process_time)
-            ).get_entry(normalise_body=settings.LOG.LOG_REQUEST_BODY_NORMALISED),
+            ).get_entry(normalise_body=settings.LOG_REQUEST_BODY_NORMALISED),
         )
         response.headers["X-Process-Time"] = str(process_time / 10**9)
 
@@ -60,27 +64,28 @@ async def _prepare_log_body(
     client_info = _prepare_client_info(request)
     http_info = _prepare_http_info(request, response)
     query_params = (
-        dict(request.query_params) if settings.LOG.LOG_REQUEST_QUERY_PARAMS else None
+        dict(request.query_params) if settings.LOG_REQUEST_QUERY_PARAMS else None
     )
     path_params = (
-        dict(request.path_params) if settings.LOG.LOG_REQUEST_PATH_PARAMS else None
+        dict(request.path_params) if settings.LOG_REQUEST_PATH_PARAMS else None
     )
-    headers = dict(request.headers) if settings.LOG.LOG_REQUEST_HEADERS else None
+    headers = dict(request.headers) if settings.LOG_REQUEST_HEADERS else None
 
     body_json = None
     try:
-        body_json = await request.json() if settings.LOG.LOG_REQUEST_BODY else None
+        body_json = await request.json() if settings.LOG_REQUEST_BODY else None
     except JSONDecodeError:
         # request.json() throws JSONDecodeError exception if the request body is empty so we need to sallow it
         pass
 
-    user = (
-        request.user.user_info.to_dict()
-        if request.user.is_authenticated
-        and settings.LOG.LOG_REQUEST_USER
-        and not settings.DEBUG
-        else None
-    )
+    # TODO: uncomment this lines in the future when we will have user authentication
+    # user = (
+    #     request.user.user_info.to_dict()
+    #     if request.user.is_authenticated
+    #     and settings.LOG_REQUEST_USER
+    #     and not settings.DEBUG
+    #     else None
+    # )
 
     return RequestLogSchema.model_validate(
         {
@@ -91,7 +96,7 @@ async def _prepare_log_body(
             "path_params": path_params,
             "headers": headers,
             "body_json": body_json,
-            "user": user,
+            "user": None,
             "duration": process_time,
         }
     )
