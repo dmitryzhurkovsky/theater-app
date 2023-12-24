@@ -31,11 +31,7 @@ services:
     image: theater/backend
     container_name: theater_migration
     command:
-      - alembic
-      - -c
-      - migrations/alembic.ini
-      - upgrade
-      - head
+      - migration
     volumes:
       - ./backend:/opt/theater/backend
     env_file:
