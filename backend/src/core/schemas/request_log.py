@@ -6,7 +6,6 @@ from src.utils import normalise_dict, prettify
 
 class RequestLogUser(BaseModel):
     id: int | None
-    company_id: int | None = Field(None, alias="companyId")
 
 
 class RequestLogClientSchema(BaseModel):
