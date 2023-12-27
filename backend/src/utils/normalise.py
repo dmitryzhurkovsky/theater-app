@@ -95,6 +95,14 @@ def _normalise_dict(
     case_insensitive: list[str],
 ) -> dict:
     """
+    Recursively normalise a dictionary by removing key-value pairs where the value is `None`,
+    an empty string, a string of only whitespace, an empty dictionary, or an empty list.
+
+    This function also handles lists, removing `None` items, empty strings, strings of only
+    whitespace, empty dictionaries, empty lists, and sorting the remaining items.
+
+    In addition, it trims leading and trailing whitespaces from string values.
+
     Parameters:
     body (dict | None): The dictionary to normalise.
     path (str): The path to the current value (dict).
@@ -120,7 +128,7 @@ def _normalise_dict(
     }
 
 
-def normalise_dict(body: dict | None, *, case_insensitive: list[str] = []) -> dict:
+def normalise_dict(body: dict | None, *, case_insensitive: list[str] | None) -> dict:
     """
     Recursively normalise a dictionary by removing key-value pairs where the value is `None`,
     an empty string, a string of only whitespace, an empty dictionary, or an empty list.
@@ -137,5 +145,7 @@ def normalise_dict(body: dict | None, *, case_insensitive: list[str] = []) -> di
     Returns:
     dict: The normalised dictionary.
     """
+    if case_insensitive is None:
+        case_insensitive = []
 
     return _normalise_dict(body, case_insensitive=case_insensitive, path="")

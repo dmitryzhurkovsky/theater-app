@@ -2,5 +2,5 @@ from src.core.enums.base import BaseEnum
 
 
 class EnvFile(BaseEnum):
-    LOCAL = ".env.local"
+    LOCAL = ".env.dev"
     PROD = ".env.prod"

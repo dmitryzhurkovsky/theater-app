@@ -5,6 +5,7 @@ from fastapi import HTTPException
 LETTER_MATCH_VALIDATOR = re.compile(r"^[a-zA-Z\-]+$")
 
 
+# TODO Maxim Suprun. Why do we use this?
 def validate_field(field):
     if not LETTER_MATCH_VALIDATOR.match(field):
         raise HTTPException(

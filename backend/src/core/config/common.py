@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     # Core settings
     VERSION: str = "1.0.0"
     PROJECT_NAME: str = "Theater API"
-    ENDPOINTS_SERVICE_PREFIX: str = "/theater/api"
+    ENDPOINTS_SERVICE_PREFIX: str = "/api"
     DEBUG: bool = True
 
     # Swagger settings
@@ -30,14 +30,7 @@ class Settings(BaseSettings):
     DB_ECHO: bool = True
     DB_POOL_SIZE: int = 5
     DB_MAX_OVERFLOW: int = 10
-    DB_PRIMARY: PostgresDsn = POSTGRESQL_PATTERN.format(
-        DB_INTERFACE_ENGINE,
-        DB_USER,
-        quote_plus(DB_PASS),
-        DB_HOST,
-        DB_PORT,
-        DB_NAME,
-    )
+    DB_PRIMARY: PostgresDsn = f"postgresql+{DB_INTERFACE_ENGINE}://{DB_USER}:{quote_plus(DB_PASS)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
     # Common settings
     SUPPORTED_LANGUAGES: list[str]
@@ -61,3 +54,4 @@ class Settings(BaseSettings):
 
     class Config:
         case_sensitive = True
+        extra = "ignore"

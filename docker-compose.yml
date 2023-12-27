@@ -14,12 +14,8 @@ services:
       - "8015:5000"
     volumes:
       - ./backend:/opt/theater/backend
-    environment:
-      UVICORN_PORT: 5000
-      UVICORN_APP: src.main:app
-      UVICORN_WORKERS: 2
     env_file:
-      - ./backend/.env.local
+      - ./backend/.env.dev
     depends_on:
       theater_db:
         condition: service_healthy
@@ -35,7 +31,7 @@ services:
     volumes:
       - ./backend:/opt/theater/backend
     env_file:
-      - ./backend/.env.local
+      - ./backend/.env.dev
     depends_on:
       theater_db:
         condition: service_healthy
@@ -43,13 +39,10 @@ services:
   theater_db:
     image: postgres:15.3-alpine
     container_name: theater_db
-    shm_size: 1G
     volumes:
       - ./.docker/pg_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: docker
-      POSTGRES_PASSWORD: docker
-      POSTGRES_DB: theater_db
+    env_file:
+      - ./backend/.env.dev
     expose:
       - 5432
     ports:
