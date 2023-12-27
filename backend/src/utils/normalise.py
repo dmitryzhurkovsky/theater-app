@@ -128,7 +128,9 @@ def _normalise_dict(
     }
 
 
-def normalise_dict(body: dict | None, *, case_insensitive: list[str] | None) -> dict:
+def normalise_dict(
+    body: dict | None, *, case_insensitive: list[str] | None = None
+) -> dict:
     """
     Recursively normalise a dictionary by removing key-value pairs where the value is `None`,
     an empty string, a string of only whitespace, an empty dictionary, or an empty list.
