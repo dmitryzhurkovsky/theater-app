@@ -1,25 +1,57 @@
-from typing import Any
+from urllib.parse import quote_plus
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import PostgresDsn
+from pydantic_settings import BaseSettings
+from src.core.enums import LogLevelEum
+
+POSTGRESQL_PATTERN = "postgresql+{}://{}:{}@{}:{}/{}"
+CORS_ALLOW_ALL = '["*"]'
 
 
 class Settings(BaseSettings):
+    # Core settings
     VERSION: str = "1.0.0"
-
+    PROJECT_NAME: str = "Theater API"
+    ENDPOINTS_SERVICE_PREFIX: str = "/api"
     DEBUG: bool = True
 
-    PROJECT_NAME: str = "FastAPI"
+    # Swagger settings
+    DOCS_URL: str = f"{ENDPOINTS_SERVICE_PREFIX}/docs"
+    OPENAPI_URL: str = f"{ENDPOINTS_SERVICE_PREFIX}/openapi.json"
+    REDOC_URL: str = f"{ENDPOINTS_SERVICE_PREFIX}/redoc"
 
-    SWAGGER_UI_PARAMETERS: dict[str, Any] = {}
+    # Database settings
+    DB_HOST: str = "theater_db"
+    DB_PORT: str = "5432"
+    DB_USER: str = "docker"
+    DB_PASS: str = "docker"
+    DB_NAME: str = "theater_db"
+    DB_INTERFACE_ENGINE: str = "asyncpg"
+    DB_ECHO: bool = True
+    DB_POOL_SIZE: int = 5
+    DB_MAX_OVERFLOW: int = 10
+    DB_PRIMARY: PostgresDsn = f"postgresql+{DB_INTERFACE_ENGINE}://{DB_USER}:{quote_plus(DB_PASS)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
-    POSTGRES_HOST: str
-    POSTGRES_PORT: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
-    POSTGRES_ASYNC_URL: str
-
+    # Common settings
     SUPPORTED_LANGUAGES: list[str]
     SECRET_KEY: str | None = None
 
-    model_config = SettingsConfigDict(extra="ignore")
+    # CORS settings
+    ALLOW_ORIGINS: list[str] = CORS_ALLOW_ALL
+    ALLOW_HEADERS: list[str] = CORS_ALLOW_ALL
+    ALLOW_METHODS: list[str] = CORS_ALLOW_ALL
+    ALLOW_CREDENTIALS: bool = True
+
+    # Logs settings
+    LOG_LEVEL: LogLevelEum = "INFO"
+    LOG_JSON_FORMAT: bool = False
+    LOG_REQUEST_QUERY_PARAMS: bool = False
+    LOG_REQUEST_PATH_PARAMS: bool = False
+    LOG_REQUEST_HEADERS: bool = False
+    LOG_REQUEST_BODY: bool = False
+    LOG_REQUEST_BODY_NORMALISED: bool = False
+    LOG_REQUEST_USER: bool = False
+
+    class Config:
+        case_sensitive = True
+        extra = "ignore"

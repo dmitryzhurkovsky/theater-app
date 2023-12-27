@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from backend.src.core.database.db import postgres_async_session
-from backend.src.core.database.utils.service import BaseService
+from src.core.database.db import postgres_async_session
+from src.core.database.utils.service import BaseService
 
 
 class AbstractUnitOfWork(ABC):

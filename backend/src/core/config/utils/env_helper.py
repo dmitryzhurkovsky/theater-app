@@ -1,4 +1,4 @@
-from backend.src.core.config.utils.enums import EnvFile
+from src.core.enums import EnvFile
 
 
 def get_env(x: str) -> str:

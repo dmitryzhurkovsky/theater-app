@@ -1,40 +1,31 @@
-import sys
 import asyncio
-from pathlib import Path as path
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
-
-BASE_DIR = path(path(__file__).parent, "../..").as_posix()
-sys.path.append(BASE_DIR)
-
-from backend.src.core.config.settings import get_settings  # noqa: E402
-from backend.src.models import BaseModel  # noqa: E402
+from sqlalchemy.ext.asyncio import AsyncEngine, async_engine_from_config
+from src.core.config.settings import settings  # noqa: E402
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-settings = get_settings()
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+from src.models import BaseModel  # noqa: E402
+
 target_metadata = BaseModel.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-config.set_main_option("sqlalchemy.url", settings.POSTGRES_ASYNC_URL)
+
+def get_database_uri():
+    return str(settings.DB_PRIMARY)
 
 
 def run_migrations_offline() -> None:
@@ -49,7 +40,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = get_database_uri()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -74,10 +65,16 @@ async def run_async_migrations() -> None:
 
     """
 
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
+    configuration = config.get_section(config.config_ini_section)
+    assert configuration
+    configuration["sqlalchemy.url"] = get_database_uri()
+    connectable = AsyncEngine(
+        engine_from_config(
+            configuration,
+            prefix="sqlalchemy.",
+            poolclass=pool.NullPool,
+            future=True,
+        )  # type: ignore
     )
 
     async with connectable.connect() as connection:

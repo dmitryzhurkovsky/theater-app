@@ -1,4 +1,4 @@
-from backend.src.core.database.utils.repository import AbstractRepository
+from src.core.database.utils.repository import AbstractRepository
 
 
 class BaseService:
