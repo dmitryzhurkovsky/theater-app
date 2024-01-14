@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.core.enums import GenderTypeEnum, RoleTypeEnum
 from src.models import BaseModel, TimestampAbstractModel
 
@@ -23,6 +24,9 @@ class User(BaseModel, TimestampAbstractModel):
     instagram_link: Mapped[str] = mapped_column(nullable=True, unique=True)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     password: Mapped[str]
+
     theatrical_role: Mapped[list["TheatricalRole"]] = relationship(
-        secondary="user_theatrical_role_relationship", back_populates="actor"
+        secondary="user_theatrical_role_relationship",
+        back_populates="actor",
+        lazy="joined",
     )
