@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
 from src.core.config.settings import settings
 
 postgres_async_engine = create_async_engine(
@@ -8,6 +9,4 @@ postgres_async_engine = create_async_engine(
     echo=settings.DB_ECHO,
 )
 
-postgres_async_session = async_sessionmaker(
-    postgres_async_engine, expire_on_commit=False
-)
+postgres_async_session = async_sessionmaker(postgres_async_engine, expire_on_commit=False)

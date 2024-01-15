@@ -50,9 +50,7 @@ class PaginatorConfig:
         :param per_page: Desired number of items per page
         """
         if per_page < 1 or not isinstance(per_page, int):
-            raise PaginationBuilderException(
-                "Per page value must be a positive integer."
-            )
+            raise PaginationBuilderException("Per page value must be a positive integer.")
 
         if per_page > self.max_per_page:
             self.per_page = self.max_per_page

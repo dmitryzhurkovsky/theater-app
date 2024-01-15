@@ -26,9 +26,7 @@ class BaseError(HTTPException):
     status_code: int | None = 500
     detail: str = "Internal Server Error"
 
-    def __init__(
-        self, detail: str | None = None, status_code: int | None = None, *args, **kwargs
-    ):
+    def __init__(self, detail: str | None = None, status_code: int | None = None, *args, **kwargs):
         super().__init__(
             status_code=status_code if status_code else self.status_code,
             detail=detail if detail else self.detail,

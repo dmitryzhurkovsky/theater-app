@@ -19,18 +19,13 @@ class FieldParser:
             try:
                 self._field = getattr(self.model_cls, self.name)  # noqa
             except AttributeError:
-                raise QueryBuilderException(
-                    f"Couldn't find `{self.full_field_name}` - INVALID FIELD"
-                )
+                raise QueryBuilderException(f"Couldn't find `{self.full_field_name}` - INVALID FIELD")
 
         return self._field
 
     def _find_type(self):
         """Find the type of the field within the model."""
-        if (
-            hasattr(self.model_cls, "__table__")
-            and self.name in self.model_cls.__table__.c
-        ):
+        if hasattr(self.model_cls, "__table__") and self.name in self.model_cls.__table__.c:
             return self.model_cls.__table__.c[self.name].type
 
         return None

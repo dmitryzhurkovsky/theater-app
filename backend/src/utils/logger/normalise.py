@@ -47,9 +47,7 @@ def _normalise_list(
     """
 
     values = [
-        item
-        for item in (_normalise(i, path, case_insensitive) for i in values)
-        if item not in ({}, [], None, "")
+        item for item in (_normalise(i, path, case_insensitive) for i in values) if item not in ({}, [], None, "")
     ]
 
     if not values:
@@ -128,9 +126,7 @@ def _normalise_dict(
     }
 
 
-def normalise_dict(
-    body: dict | None, *, case_insensitive: list[str] | None = None
-) -> dict:
+def normalise_dict(body: dict | None, *, case_insensitive: list[str] | None = None) -> dict:
     """
     Recursively normalise a dictionary by removing key-value pairs where the value is `None`,
     an empty string, a string of only whitespace, an empty dictionary, or an empty list.

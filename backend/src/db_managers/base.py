@@ -23,15 +23,11 @@ class BaseDatabaseManager:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def _handle_integrity_error(
-        self, e: IntegrityError, session: AsyncSession
-    ) -> None:
+    async def _handle_integrity_error(self, e: IntegrityError, session: AsyncSession) -> None:
         # Handle foreign key constraint errors, etc...
         await session.rollback()
         if e and "UniqueViolationError" in e.orig.args[0]:
-            LOG.warning(
-                f"IntegrityError for model -> {self.model.__name__}", exc_info=e
-            )
+            LOG.warning(f"IntegrityError for model -> {self.model.__name__}", exc_info=e)
         else:
             raise
 
@@ -61,9 +57,7 @@ class BaseDatabaseManager:
             result = await session.execute(select(self.model).filter_by(id=id_))
             instance = result.scalar_one()
         except NoResultFound:
-            raise NotFoundError(
-                detail=f"{self.model.__name__} with id:{id_} not found."
-            ) from None
+            raise NotFoundError(detail=f"{self.model.__name__} with id:{id_} not found.") from None
 
         return instance
 
@@ -79,9 +73,7 @@ class BaseDatabaseManager:
 
         return obj
 
-    async def update(
-        self, id_: int, update_data: dict[str, Any], session: AsyncSession = None
-    ) -> T:
+    async def update(self, id_: int, update_data: dict[str, Any], session: AsyncSession = None) -> T:
         """Update an object by its ID."""
         session = session or self.session
         instance = await self.get_or_404(id_, session)
@@ -97,9 +89,7 @@ class BaseDatabaseManager:
 
         return instance
 
-    async def upsert(
-        self, id_: int, obj_data: dict[str, Any], session: AsyncSession = None
-    ) -> T:
+    async def upsert(self, id_: int, obj_data: dict[str, Any], session: AsyncSession = None) -> T:
         """Update an object if it exists, otherwise create it."""
         session = session or self.session
 
@@ -149,9 +139,7 @@ class BaseDatabaseManager:
         if sort_by:
             sort_column = getattr(self.model, sort_by, None)
             if sort_column:
-                query = query.order_by(
-                    sort_column.asc() if order == SortOrder.ASC else sort_column.desc()
-                )
+                query = query.order_by(sort_column.asc() if order == SortOrder.ASC else sort_column.desc())
 
         if limit:
             query = query.limit(limit)

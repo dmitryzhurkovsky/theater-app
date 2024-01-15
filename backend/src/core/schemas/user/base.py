@@ -29,9 +29,7 @@ class UserRead(UserBase):
     created_at: datetime
     updated_at: datetime
 
-    theatrical_role: list[
-        "TheatricalRole"
-    ]  # TODO need to replace it with Pydantic model
+    theatrical_role: list["TheatricalRole"]  # TODO need to replace it with Pydantic model
 
     class Config:
         from_attributes = True

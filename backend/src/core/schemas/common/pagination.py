@@ -28,8 +28,6 @@ class Pagination(BaseModel):
     @field_validator("page_number", "per_page", mode="before", check_fields=False)
     def validate_page_number(cls, value):  # noqa
         if value is not None and value < 1:
-            raise ValueError(
-                """The fields "page_number" & "per_page" must be greater than 0."""
-            )
+            raise ValueError("""The fields "page_number" & "per_page" must be greater than 0.""")
 
         return value

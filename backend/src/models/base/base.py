@@ -12,6 +12,4 @@ class BaseModel:
     def __tablename__(cls):
         return re.sub(r"(?<!^)(?=[A-Z])", "_", cls.__name__).lower() + "s"
 
-    id: Mapped[UUID] = mapped_column(
-        primary_key=True, default=lambda: str(uuid4()), nullable=False
-    )
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=lambda: str(uuid4()), nullable=False)

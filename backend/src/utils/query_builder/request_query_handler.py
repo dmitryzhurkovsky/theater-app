@@ -46,15 +46,11 @@ class Paginator:
 
 
 class RequestQueryHandler:
-    def __init__(
-        self, session: AsyncSession, model, default_per_page=100, max_per_page=200
-    ) -> None:
+    def __init__(self, session: AsyncSession, model, default_per_page=100, max_per_page=200) -> None:
         self.session = session
         self.model = model
         self.sorter = Sorter(self.model)
-        self.paginator = Paginator(
-            default_per_page=default_per_page, max_per_page=max_per_page
-        )
+        self.paginator = Paginator(default_per_page=default_per_page, max_per_page=max_per_page)
 
     def apply_sort(self, stmt: Select, query_params: QueryParameters) -> Select:
         if query_params.sort:
@@ -67,9 +63,7 @@ class RequestQueryHandler:
 
         return stmt
 
-    async def get_paginated_response(
-        self, stmt: Select, query_params: QueryParameters
-    ) -> PaginationResponseSchema:
+    async def get_paginated_response(self, stmt: Select, query_params: QueryParameters) -> PaginationResponseSchema:
         stmt = self.apply_sort(stmt, query_params)
 
         metadata = await self.get_pagination_metadata(
@@ -85,20 +79,12 @@ class RequestQueryHandler:
             meta=metadata,
         )
 
-    async def get_pagination_metadata(
-        self, stmt: Select, paginator: PaginatorConfig
-    ) -> PaginationMetaSchema:
+    async def get_pagination_metadata(self, stmt: Select, paginator: PaginatorConfig) -> PaginationMetaSchema:
         """
         Get pagination related metadata.
         """
-        total_items = (
-            await self.session.execute(
-                stmt.with_only_columns(func.count()).order_by(None)
-            )
-        ).scalar_one()
-        total_pages = total_items // paginator.per_page + (
-            total_items % paginator.per_page > 0
-        )
+        total_items = (await self.session.execute(stmt.with_only_columns(func.count()).order_by(None))).scalar_one()
+        total_pages = total_items // paginator.per_page + (total_items % paginator.per_page > 0)
 
         next_page = paginator.page + 1 if paginator.page < total_pages else None
         prev_page = paginator.page - 1 if paginator.page > 1 else None

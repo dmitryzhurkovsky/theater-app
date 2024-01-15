@@ -2,17 +2,16 @@ import structlog
 from fastapi import status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from src.core.config.settings import settings
-from src.core.exceptions.base import ApplicationException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
+
+from src.core.config.settings import settings
+from src.core.exceptions.base import ApplicationException
 
 LOG = structlog.stdlib.get_logger()
 
 
-async def custom_validation_exception_handler(
-    request: Request, exc: RequestValidationError
-) -> JSONResponse:
+async def custom_validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
     _ = request
     if settings.DEBUG:
         LOG.error(

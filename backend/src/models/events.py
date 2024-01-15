@@ -12,9 +12,7 @@ if TYPE_CHECKING:
 
 class Event(BaseModel, TimestampAbstractModel):
     name: Mapped[str]
-    date: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now, nullable=False
-    )
+    date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now, nullable=False)
     # TODO: should be implemented Enum choice field
     place: Mapped[str] = mapped_column(default="scena")
     type: Mapped[list["Performance"]] = relationship(

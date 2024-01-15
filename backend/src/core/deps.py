@@ -21,9 +21,7 @@ async def with_async_session() -> AsyncGenerator[AsyncSession, None]:
         await session.close()
 
 
-def with_controller(
-    controller_cls: type[BaseService], config: ControllerConfig = ControllerConfig()
-):
+def with_controller(controller_cls: type[BaseService], config: ControllerConfig = ControllerConfig()):
     def _controller_loader(session: AsyncSession = Depends(with_async_session)):
         return controller_cls(session, config)
 
