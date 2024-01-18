@@ -9,7 +9,7 @@ from src.models import TheatricalRole
 from src.services.base import BaseService
 
 
-class TheatricalRoleController(BaseService):
+class TheatricalRoleService(BaseService):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.theatrical_role_manager = TheatricalRoleDatabaseManager(self.session)

@@ -112,7 +112,7 @@ class BaseDatabaseManager:
 
         return instance
 
-    async def list(
+    async def _list(
         self,
         fields: list[str] | None = None,
         filters: dict[str, Any] | None = None,

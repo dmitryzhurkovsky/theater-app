@@ -83,7 +83,10 @@ class RequestQueryHandler:
         """
         Get pagination related metadata.
         """
-        total_items = (await self.session.execute(stmt.with_only_columns(func.count()).order_by(None))).scalar_one()
+        stmt = stmt.with_only_columns(func.count()).order_by(None)
+        result = await self.session.execute(stmt)
+
+        total_items = result.scalar_one()
         total_pages = total_items // paginator.per_page + (total_items % paginator.per_page > 0)
 
         next_page = paginator.page + 1 if paginator.page < total_pages else None

@@ -13,8 +13,6 @@ class SortField(BaseModel):
     @staticmethod
     def from_string(s: str) -> "SortField":
         parts = s.split(":")
-        if len(parts) == 3:
-            return SortField(field=parts[0], order=parts[1], null_order=parts[2])
         if len(parts) == 2:
             return SortField(field=parts[0], order=parts[1])
         return SortField(field=parts[0])
