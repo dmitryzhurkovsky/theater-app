@@ -16,6 +16,8 @@ export PRINT_HELP_PYSCRIPT
 
 .EXPORT_ALL_VARIABLES:
 COMPOSE_FILE ?= ../docker-compose.yml
+COMPOSE_TEST_FILE ?= docker-compose.test.yml
+ALEMBIC_VERSION ?= 4c9e3982a64b
 
 help: ## List available commands
 	@python3 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -64,3 +66,42 @@ migrate: ## Generate a new migration
 		--user root \
 		theater_migration \
 		alembic -c ./migrations/alembic.ini revision --autogenerate -m "$(migration_message)"
+
+rerun_migrations: ## Rerun all migrations
+	make set_alembic_version && make upgrade
+
+validate_migrations: ## Validate migration
+	make rerun_migrations && migration_message="VALIDATION" make migrate
+
+set_alembic_version_for_test_db: ## Set alembic version for test db
+	docker-compose \
+		--file $(COMPOSE_FILE) \
+		--file $(COMPOSE_TEST_FILE) \
+		run \
+		--rm \
+		--user root \
+		theater_migration \
+		python src/commands/alembic_migration.py \
+		--version $(ALEMBIC_VERSION) \
+		--inifile migrations/alembic.ini
+
+build_test: ## Build test services in docker-compose.test.yml
+	docker-compose \
+		--file $(COMPOSE_FILE) \
+		--file $(COMPOSE_TEST_FILE) \
+		build \
+		--no-cache theater_api
+
+up_test: ## Start test services of docker-compose.test.yml
+	# temporary adding hardcoded alembic version to make sure that migrations is not broken
+	make set_alembic_version_for_test_db \
+	&& \
+	PYTEST_ARGS=${pytest_args} docker-compose \
+		--file $(COMPOSE_FILE) \
+		--file $(COMPOSE_TEST_FILE) \
+		up \
+		theater_api \
+		--remove-orphans
+
+down_test: ## Stop test services of docker-compose.test.yml
+	docker-compose --file $(COMPOSE_FILE) --file $(COMPOSE_TEST_FILE) down

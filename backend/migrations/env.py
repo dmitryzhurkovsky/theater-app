@@ -26,7 +26,7 @@ target_metadata = BaseModel.metadata
 
 
 def get_database_uri():
-    return str(settings.DB_PRIMARY)
+    return str(settings.DATABASE_SETTINGS.DB_PRIMARY)
 
 
 def run_migrations_offline() -> None:

@@ -7,6 +7,8 @@ from sqlalchemy.orm import Mapped, declared_attr, mapped_column
 
 @as_declarative()
 class BaseModel:
+    __abstract__ = True
+
     @classmethod
     @declared_attr
     def __tablename__(cls):
