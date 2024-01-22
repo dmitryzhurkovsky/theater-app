@@ -5,6 +5,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncEngine, async_engine_from_config
+
 from src.core.config.settings import settings  # noqa: E402
 
 # this is the Alembic Config object, which provides
@@ -25,7 +26,7 @@ target_metadata = BaseModel.metadata
 
 
 def get_database_uri():
-    return str(settings.DB_PRIMARY)
+    return str(settings.DATABASE_SETTINGS.DB_PRIMARY)
 
 
 def run_migrations_offline() -> None:

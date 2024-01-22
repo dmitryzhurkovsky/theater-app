@@ -1,6 +1,7 @@
 from typing import Self
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, model_validator
+
 from src.utils import normalise_dict, prettify
 
 

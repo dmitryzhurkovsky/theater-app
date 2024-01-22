@@ -1,5 +1,6 @@
 import structlog
 from fastapi import APIRouter
+
 from src.core.schemas import MessageResponseSchema
 
 router = APIRouter(prefix="/healthcheck", tags=["Healthcheck"])

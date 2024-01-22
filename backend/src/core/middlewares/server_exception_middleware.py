@@ -1,9 +1,10 @@
 import structlog
 from fastapi import status
-from src.core.config.settings import settings
-from src.core.exceptions import ApplicationException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
+
+from src.core.config.settings import settings
+from src.core.exceptions import ApplicationException
 
 LOG = structlog.stdlib.get_logger()
 

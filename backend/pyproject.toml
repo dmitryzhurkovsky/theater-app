@@ -16,7 +16,9 @@ asyncpg = "==0.29.0"
 greenlet = "==3.0.2"
 psycopg2-binary = "==2.9.4"
 asgi-correlation-id = "==4.2.0"
-structlog = "22.3.0"
+structlog = "==22.3.0"
+environs = "==9.5.0"
+httpx = "==0.23.3"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "==3.3.2"
@@ -27,6 +29,7 @@ pytest = "==7.2.1"
 pytest-asyncio = "==0.20.3"
 pytest-cov = "==4.0.0"
 pytest-mock = "==3.10.0"
+polyfactory = "==2.7.2"
 
 [tool.ruff]
 line-length = 120
@@ -41,6 +44,12 @@ filterwarnings = []
 markers = ["pytest.mark.asyncio"]
 minversion = "6.0"
 testpaths = ["tests"]
+
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line-length = 120
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

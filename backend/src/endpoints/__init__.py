@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from src.core.config.settings import settings
 from src.endpoints.v1 import router as v1_router
 

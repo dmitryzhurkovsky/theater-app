@@ -4,11 +4,12 @@ from json import JSONDecodeError
 import structlog
 from asgi_correlation_id.context import correlation_id
 from fastapi import Request, Response
+
 from src.core.config.settings import settings
 from src.core.schemas import (
     RequestLogClientSchema,
     RequestLogHttpSchema,
-    RequestLogSchema
+    RequestLogSchema,
 )
 
 ACC_LOG = structlog.stdlib.get_logger("api.access")
@@ -40,9 +41,9 @@ async def logging_middleware(request: Request, call_next) -> Response:
         # recreate the uvicorn access log format, but add all parameters as structured information
         ACC_LOG.info(
             _prepare_log_message(request, response),
-            **(
-                await _prepare_log_body(request, response, request_id, process_time)
-            ).get_entry(normalise_body=settings.LOG_REQUEST_BODY_NORMALISED),
+            **(await _prepare_log_body(request, response, request_id, process_time)).get_entry(
+                normalise_body=settings.LOG_SETTINGS.LOG_REQUEST_BODY_NORMALISED
+            ),
         )
         response.headers["X-Process-Time"] = str(process_time / 10**9)
 
@@ -63,17 +64,13 @@ async def _prepare_log_body(
 ) -> RequestLogSchema:
     client_info = _prepare_client_info(request)
     http_info = _prepare_http_info(request, response)
-    query_params = (
-        dict(request.query_params) if settings.LOG_REQUEST_QUERY_PARAMS else None
-    )
-    path_params = (
-        dict(request.path_params) if settings.LOG_REQUEST_PATH_PARAMS else None
-    )
-    headers = dict(request.headers) if settings.LOG_REQUEST_HEADERS else None
+    query_params = dict(request.query_params) if settings.LOG_SETTINGS.LOG_REQUEST_QUERY_PARAMS else None
+    path_params = dict(request.path_params) if settings.LOG_SETTINGS.LOG_REQUEST_PATH_PARAMS else None
+    headers = dict(request.headers) if settings.LOG_SETTINGS.LOG_REQUEST_HEADERS else None
 
     body_json = None
     try:
-        body_json = await request.json() if settings.LOG_REQUEST_BODY else None
+        body_json = await request.json() if settings.LOG_SETTINGS.LOG_REQUEST_BODY else None
     except JSONDecodeError:
         # request.json() throws JSONDecodeError exception if the request body is empty so we need to sallow it
         pass
@@ -82,7 +79,7 @@ async def _prepare_log_body(
     # user = (
     #     request.user.user_info.to_dict()
     #     if request.user.is_authenticated
-    #     and settings.LOG_REQUEST_USER
+    #     and settings.LOG_SETTINGS.LOG_REQUEST_USER
     #     and not settings.DEBUG
     #     else None
     # )
@@ -103,9 +100,7 @@ async def _prepare_log_body(
 
 
 def _prepare_client_info(request: Request) -> RequestLogClientSchema:
-    return RequestLogClientSchema.model_validate(
-        {"ip": request.client.host, "port": request.client.port}
-    )
+    return RequestLogClientSchema.model_validate({"ip": request.client.host, "port": request.client.port})
 
 
 def _prepare_http_info(request: Request, response: Response) -> RequestLogHttpSchema:

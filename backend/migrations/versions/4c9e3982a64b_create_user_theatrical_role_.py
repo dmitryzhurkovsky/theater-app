@@ -32,9 +32,7 @@ def upgrade() -> None:
             ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint(
-            "user_id", "theatrical_role_id", name="idx_user_theatrical_role"
-        ),
+        sa.UniqueConstraint("user_id", "theatrical_role_id", name="idx_user_theatrical_role"),
     )
 
 

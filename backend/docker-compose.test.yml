@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  theater_api:
+    container_name: theater_api_test
+    command:
+      [
+        "pytest",
+        "-p no:cacheprovider -p no:warnings",
+        "$PYTEST_ARGS"
+      ]
+    env_file:
+      - ./backend/.test.env
+
+  theater_migration:
+    container_name: theater_migration_test
+    env_file:
+      - ./backend/.test.env
+
+  theater_db:
+    container_name: theater_db_test
+    env_file:
+      - ./backend/.test.env
+    volumes:
+      - ./.docker/test/postgres:/var/lib/postgresql/data

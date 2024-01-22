@@ -102,9 +102,7 @@ class Logger:
             processors=[
                 # Remove _record & _from_structlog.
                 structlog.stdlib.ProcessorFormatter.remove_processors_meta,
-                structlog.processors.JSONRenderer()
-                if self.json_logs
-                else structlog.dev.ConsoleRenderer(colors=True),
+                structlog.processors.JSONRenderer() if self.json_logs else structlog.dev.ConsoleRenderer(colors=True),
             ],
         )
 
@@ -154,9 +152,7 @@ class Logger:
                 sys.__excepthook__(exc_type, exc_value, exc_traceback)
                 return
 
-            root_logger.error(
-                "Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback)
-            )
+            root_logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
 
         sys.excepthook = handle_exception
 

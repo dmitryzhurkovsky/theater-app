@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
 from src.core.database.db import postgres_async_session
-from src.core.database.utils.service import BaseService
+from src.services import BaseService
 
 
 class AbstractUnitOfWork(ABC):
-    repository = type[BaseService]
+    service = type[BaseService]
 
     @abstractmethod
     def __init__(self):
