@@ -2,6 +2,6 @@ from src.core.enums.base import BaseEnum
 
 
 class EnvironmentEnum(BaseEnum):
-    PRD = "prd"
+    PROD = "prod"
     DEV = "dev"
     TEST = "test"
