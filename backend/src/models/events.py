@@ -1,8 +1,10 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import DateTime, ForeignKey
+from sqlalchemy.orm import (Mapped,
+                            mapped_column,
+                            relationship)
 
 from src.models import BaseModel, TimestampAbstractModel
 
@@ -15,10 +17,11 @@ class Event(BaseModel, TimestampAbstractModel):
     date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now, nullable=False)
     # TODO: should be implemented Enum choice field
     place: Mapped[str] = mapped_column(default="scena")
-    type: Mapped[list["Performance"]] = relationship(
-        secondary="user_theatrical_role_relationship",
-        back_populates="actor",
-        lazy="joined",
+    is_approved: Mapped[bool] = mapped_column(unique=False, default=False)
+    performance_id: Mapped[int] = mapped_column(ForeignKey("performances.id"))
+    type: Mapped["Performance"] = relationship(
+        "Performance",
+        back_populates="events",
+        foreign_keys=[performance_id]
     )
-    # TODO: should be implemented Enum choice field
-    status: Mapped[str] = mapped_column()
+
