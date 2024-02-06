@@ -19,9 +19,7 @@ class Event(BaseModel, TimestampAbstractModel):
     place: Mapped[str] = mapped_column(default="scena")
     is_approved: Mapped[bool] = mapped_column(unique=False, default=False)
     performance_id: Mapped[int] = mapped_column(ForeignKey("performances.id"))
-    type: Mapped["Performance"] = relationship(
-        "Performance",
-        back_populates="events",
-        foreign_keys=[performance_id]
-    )
+    type: Mapped["Performance"] = relationship("Performance",
+                                                back_populates="events",
+                                                foreign_keys=[performance_id])
 
