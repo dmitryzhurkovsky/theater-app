@@ -12,8 +12,9 @@ if TYPE_CHECKING:
 
 
 class TheatricalRole(BaseModel):
+    __tablename__ = "theatrical_roles"
 
-    role_id: Mapped[int] = mapped_column(ForeignKey("theatrical_roles.id"))
+    role_id: Mapped[int] = mapped_column(ForeignKey("theatrical_roles.id"), index=True)
 
     name: Mapped[str] = relationship("Performance",
                                     back_populates="roles",

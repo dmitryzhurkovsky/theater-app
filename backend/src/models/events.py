@@ -13,12 +13,14 @@ if TYPE_CHECKING:
 
 
 class Event(BaseModel, TimestampAbstractModel):
+    __tablename__ = "events"
+
     name: Mapped[str]
     date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now, nullable=False)
     # TODO: should be implemented Enum choice field
     place: Mapped[str] = mapped_column(default="scena")
-    is_approved: Mapped[bool] = mapped_column(unique=False, default=False)
-    performance_id: Mapped[int] = mapped_column(ForeignKey("performances.id"))
+    is_approved: Mapped[bool] = mapped_column(default=False)
+    performance_id: Mapped[int] = mapped_column(ForeignKey("performances.id"), index=True)
     type: Mapped["Performance"] = relationship("Performance",
                                                 back_populates="events",
                                                 foreign_keys=[performance_id])

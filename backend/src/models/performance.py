@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 
 class Performance(BaseModel, TimestampAbstractModel):
+    __tablename__ = "performances"
+
     title: Mapped[str] = mapped_column(String(256), unique=True)
     image: Mapped[str]
     description: Mapped[str] = mapped_column(String(1024))
@@ -21,11 +23,12 @@ class Performance(BaseModel, TimestampAbstractModel):
     age: Mapped[int] = mapped_column(default=0)
     duration_hour: Mapped[int] = mapped_column(default=1, nullable=False)
     duration_min: Mapped[int] = mapped_column(default=0)
+    recommendations: Mapped[dict] = mapped_column(type_=JSON)
+    need_admin_approve: Mapped[bool] = mapped_column(default=False)
     roles: Mapped[list["TheatricalRole"]] = relationship("TheatricalRole",
                                                          back_populates="name",
                                                          uselist=True)
-    recommendations: Mapped[dict] = mapped_column(type_=JSON)
-    need_admin_approve: Mapped[bool]
+
     events: Mapped[list["Event"]] = relationship("Event",
                                                  back_populates="type",
                                                  uselist=True)
