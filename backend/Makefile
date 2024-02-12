@@ -35,7 +35,7 @@ down: ## Stop services of docker-compose.yml
 	docker-compose --file $(COMPOSE_FILE) down
 
 logs: ## Follow logs of the FastAPI server
-	docker-compose --file $(COMPOSE_FILE) logs theater_api --follow
+	docker-compose --file $(COMPOSE_FILE) logs --follow theater_api
 
 exec: ## Exec inside the FastAPI server
 	docker-compose --file $(COMPOSE_FILE) exec theater_api bash
