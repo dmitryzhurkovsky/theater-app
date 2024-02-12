@@ -10,6 +10,7 @@ from src.models import BaseModel, TimestampAbstractModel
 
 if TYPE_CHECKING:
     from src.models.performance import Performance
+    from src.models.theatrical_roles import TheatricalRole
 
 
 class Event(BaseModel, TimestampAbstractModel):
@@ -24,4 +25,7 @@ class Event(BaseModel, TimestampAbstractModel):
     type: Mapped["Performance"] = relationship("Performance",
                                                 back_populates="events",
                                                 foreign_keys=[performance_id])
+    theatrical_roles: Mapped[list["TheatricalRole"]] = relationship("TheatricalRole",
+                                                                    back_populates="name",
+                                                                    uselist=True)
 

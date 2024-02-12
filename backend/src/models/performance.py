@@ -25,9 +25,6 @@ class Performance(BaseModel, TimestampAbstractModel):
     duration_min: Mapped[int] = mapped_column(default=0)
     recommendations: Mapped[dict] = mapped_column(type_=JSON)
     need_admin_approve: Mapped[bool] = mapped_column(default=False)
-    roles: Mapped[list["TheatricalRole"]] = relationship("TheatricalRole",
-                                                         back_populates="name",
-                                                         uselist=True)
 
     events: Mapped[list["Event"]] = relationship("Event",
                                                  back_populates="type",

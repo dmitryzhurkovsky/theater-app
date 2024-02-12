@@ -14,11 +14,11 @@ if TYPE_CHECKING:
 class TheatricalRole(BaseModel):
     __tablename__ = "theatrical_roles"
 
-    role_id: Mapped[int] = mapped_column(ForeignKey("theatrical_roles.id"), index=True)
+    event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), index=True)
 
-    name: Mapped[str] = relationship("Performance",
-                                    back_populates="roles",
-                                    foreign_keys=[role_id])
+    name: Mapped[str] = relationship("Event",
+                                    back_populates="theatrical_roles",
+                                    foreign_keys=[event_id])
 
     actors: Mapped[list["User"]] = relationship(secondary="user_theatrical_role_relationship",
                                                 back_populates="theatrical_role",
