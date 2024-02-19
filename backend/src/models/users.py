@@ -7,8 +7,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.core.enums import GenderTypeEnum
 from src.models import BaseModel, TimestampAbstractModel
 
+from sqlalchemy.dialects.postgresql import ARRAY
+
 if TYPE_CHECKING:
     from src.models.theatrical_roles import TheatricalRole
+
 
 class User(BaseModel, TimestampAbstractModel):
     __tablename__ = "users"
@@ -27,10 +30,8 @@ class User(BaseModel, TimestampAbstractModel):
     instagram_link: Mapped[str] = mapped_column(nullable=True, unique=True)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     password: Mapped[str]
-    free_dates: Mapped[list[datetime]] = mapped_column(DateTime(timezone=True))
+    free_dates: Mapped[list[datetime]] = mapped_column(ARRAY(DateTime(timezone=True)), nullable=True, default=None)
 
     theatrical_role: Mapped[list["TheatricalRole"]] = relationship(
-        secondary="user_theatrical_role_relationship",
-        back_populates="actors",
-        lazy="joined",
+        secondary="user_theatrical_role_relationship", back_populates="actors"
     )
