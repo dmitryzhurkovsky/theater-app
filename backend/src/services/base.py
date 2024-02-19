@@ -1,7 +1,7 @@
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.schemas import ControllerConfig, PaginationResponseSchema, QueryParameters
+from src.core.schemas import ControllerConfig, PaginationResponseSchema, QueryParameters, Pagination
 from src.utils.query_builder.request_query_handler import RequestQueryHandler
 
 
@@ -10,9 +10,9 @@ class BaseService:
         self.session = session
         self.config = config
 
-    async def get_paginated_response(
-        self, model, stmt: Select, query_parameters: QueryParameters
-    ) -> PaginationResponseSchema:
+    async def get_paginated_response(self, model, stmt: Select) -> PaginationResponseSchema:
+        pagination = Pagination(page=1, per_page=10)
+        query_parameters = QueryParameters(pagination=pagination)
         query_enhancer = RequestQueryHandler(
             self.session,
             model,

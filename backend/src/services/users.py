@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from src.core.schemas import PaginationResponseSchema, QueryParameters
+from src.core.schemas import PaginationResponseSchema
 from src.db_managers.users import UserManager
 from src.services.base import BaseService
 from uuid import UUID
@@ -15,11 +15,10 @@ class UserService(BaseService):
         super().__init__(*args, **kwargs)
         self.user_manager = UserManager(self.session)
 
-    async def list_users(self, query_params: QueryParameters) -> PaginationResponseSchema:
+    async def list_users(self) -> PaginationResponseSchema:
         return await self.get_paginated_response(
             self.user_manager.model,
             self.user_manager.base_query,
-            query_params,
         )
 
     async def create_user(self, user: UserCreateResponseSchema) -> User:

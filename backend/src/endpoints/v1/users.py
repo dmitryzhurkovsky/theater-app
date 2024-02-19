@@ -15,8 +15,6 @@ from src.core.schemas.user.response import (
 from src.core.schemas import MessageResponseSchema
 from src.core.deps import with_async_session
 from src.core.schemas import ControllerConfig
-from src.core.schemas.common.query import QueryParameters
-from src.core.schemas.common.pagination import Pagination
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -31,11 +29,9 @@ def user_service_pagination(
     return UserService(session=session, config=config)
 
 
-@router.post("", summary="get users", response_model=PaginationResponseSchema)
+@router.get("", summary="get users", response_model=PaginationResponseSchema)
 async def users(user_service: UserService = Depends(user_service_pagination)):
-    pagination = Pagination(page=1, per_page=10)
-    params = QueryParameters(pagination=pagination)
-    users_res_test = await user_service.list_users(params)
+    users_res_test = await user_service.list_users()
 
     return users_res_test
 
