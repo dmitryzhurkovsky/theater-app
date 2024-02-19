@@ -17,9 +17,9 @@ depends_on = None
 
 
 def upgrade() -> None:
-
-    genretypeenum = postgresql.ENUM('COMEDY', 'TRAGEDY', 'DRAMA', 'FARCE', 'MUSICAL', 'THRILLER', 'POLITICAL',
-                                    name='genretypeenum')
+    genretypeenum = postgresql.ENUM(
+        "COMEDY", "TRAGEDY", "DRAMA", "FARCE", "MUSICAL", "THRILLER", "POLITICAL", name="genretypeenum"
+    )
     genretypeenum.create(op.get_bind())
 
     op.create_table(
@@ -71,44 +71,29 @@ def upgrade() -> None:
     op.drop_column("performances", "roles")
 
     op.add_column("theatrical_roles", sa.Column("event_id", sa.Uuid(), nullable=False))
-    op.create_index(
-        op.f("ix_theatrical_roles_event_id"), "theatrical_roles", ["event_id"], unique=False
-    )
+    op.create_index(op.f("ix_theatrical_roles_event_id"), "theatrical_roles", ["event_id"], unique=False)
     op.create_foreign_key("theatrical_roles_events", "theatrical_roles", "events", ["event_id"], ["id"])
-    op.drop_column("theatrical_roles", "name")
+    op.add_column("theatrical_roles", sa.Column("name", sa.VARCHAR(), autoincrement=False, nullable=False))
+    op.add_column("theatrical_roles", sa.Column("actors", sa.ARRAY(sa.VARCHAR()), nullable=True))
 
-    op.add_column("users", sa.Column("is_actor", sa.Boolean(), nullable=False))
-    op.add_column("users", sa.Column("is_admin", sa.Boolean(), nullable=False))
-    op.add_column("users", sa.Column("is_director", sa.Boolean(), nullable=False))
-    op.add_column("users", sa.Column("free_dates", sa.DateTime(timezone=True), nullable=False))
-    op.drop_column("users", "type")
+    op.add_column("users", sa.Column("is_actor", sa.Boolean(), nullable=False, default=True))
+    op.add_column("users", sa.Column("is_admin", sa.Boolean(), nullable=False, default=False))
+    op.add_column("users", sa.Column("is_director", sa.Boolean(), nullable=False, default=False))
+    op.add_column("users", sa.Column("free_dates", sa.ARRAY(sa.DateTime(timezone=True)), nullable=True, default=None))
 
 
 def downgrade() -> None:
-
-    op.add_column(
-        "users",
-        sa.Column(
-            "type",
-            postgresql.ENUM("ADMIN", "ACTOR", "VIEWER", name="roletypeenum"),
-            autoincrement=False,
-            nullable=False,
-        ),
-    )
     op.drop_column("users", "free_dates")
     op.drop_column("users", "is_director")
     op.drop_column("users", "is_admin")
     op.drop_column("users", "is_actor")
 
-    op.add_column(
-        "theatrical_roles", sa.Column("name", sa.VARCHAR(), autoincrement=False, nullable=False)
-    )
+    op.drop_column("theatrical_roles", "name")
     op.drop_index(op.f("ix_theatrical_roles_event_id"), table_name="theatrical_roles")
     op.drop_column("theatrical_roles", "event_id")
+    op.drop_column("theatrical_roles", "actors")
 
-    op.add_column(
-        "performances", sa.Column("roles", sa.VARCHAR(), autoincrement=False, nullable=False)
-    )
+    op.add_column("performances", sa.Column("roles", sa.VARCHAR(), autoincrement=False, nullable=False))
     op.drop_column("performances", "need_admin_approve")
     op.drop_column("performances", "recommendations")
     op.drop_column("performances", "duration_min")
@@ -131,13 +116,12 @@ def downgrade() -> None:
             ["theatrical_roles.id"],
             name="user_theatrical_role_relationships_theatrical_role_id_fkey",
         ),
-        sa.ForeignKeyConstraint(
-            ["user_id"], ["users.id"], name="user_theatrical_role_relationships_user_id_fkey"
-        ),
-        sa.PrimaryKeyConstraint("id", name="user_theatrical_role_relationships_pkey")
+        sa.ForeignKeyConstraint(["user_id"], ["users.id"], name="user_theatrical_role_relationships_user_id_fkey"),
+        sa.PrimaryKeyConstraint("id", name="user_theatrical_role_relationships_pkey"),
     )
     op.drop_table("user_theatrical_role_relationship")
 
-    genretypeenum = postgresql.ENUM('COMEDY', 'TRAGEDY', 'DRAMA', 'FARCE', 'MUSICAL', 'THRILLER', 'POLITICAL',
-                                    name='genretypeenum')
+    genretypeenum = postgresql.ENUM(
+        "COMEDY", "TRAGEDY", "DRAMA", "FARCE", "MUSICAL", "THRILLER", "POLITICAL", name="genretypeenum"
+    )
     genretypeenum.drop(op.get_bind())

@@ -1,5 +1,6 @@
 from sqlalchemy import Select, func
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.encoders import jsonable_encoder
 
 from src.core.schemas import (
     PaginationMetaSchema,
@@ -75,7 +76,7 @@ class RequestQueryHandler:
         result = await self.session.execute(stmt)
 
         return PaginationResponseSchema(
-            data=result.scalars().all(),
+            data=jsonable_encoder(result.scalars().all()),
             meta=metadata,
         )
 
@@ -85,7 +86,6 @@ class RequestQueryHandler:
         """
         stmt = stmt.with_only_columns(func.count()).order_by(None)
         result = await self.session.execute(stmt)
-
         total_items = result.scalar_one()
         total_pages = total_items // paginator.per_page + (total_items % paginator.per_page > 0)
 
@@ -94,6 +94,7 @@ class RequestQueryHandler:
 
         return PaginationMetaSchema(
             **{
+                "data": jsonable_encoder(paginator),
                 "per_page": paginator.per_page,
                 "page": paginator.page,
                 "total": total_items,

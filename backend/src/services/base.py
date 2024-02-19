@@ -6,7 +6,7 @@ from src.utils.query_builder.request_query_handler import RequestQueryHandler
 
 
 class BaseService:
-    def __init__(self, session: AsyncSession, config: ControllerConfig) -> None:
+    def __init__(self, session: AsyncSession, config: ControllerConfig = None) -> None:
         self.session = session
         self.config = config
 

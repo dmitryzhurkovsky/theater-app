@@ -1,6 +1,7 @@
 from typing import Any, Sequence, TypeVar
 
 import structlog
+from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -49,15 +50,15 @@ class BaseDatabaseManager:
 
         return result.scalar()
 
-    async def get_or_404(self, id_: int, session: AsyncSession = None) -> T:
+    async def get_or_404(self, uuid_: UUID, session: AsyncSession = None) -> T:
         """Retrieve an object by its ID and Raise NotFoundError if not found."""
         session = session or self.session
 
         try:
-            result = await session.execute(select(self.model).filter_by(id=id_))
+            result = await session.execute(select(self.model).filter_by(id=uuid_))
             instance = result.scalar_one()
         except NoResultFound:
-            raise NotFoundError(detail=f"{self.model.__name__} with id:{id_} not found.") from None
+            raise NotFoundError(detail=f"{self.model.__name__} with id:{uuid_} not found.") from None
 
         return instance
 
@@ -73,10 +74,10 @@ class BaseDatabaseManager:
 
         return obj
 
-    async def update(self, id_: int, update_data: dict[str, Any], session: AsyncSession = None) -> T:
+    async def update(self, uuid_: UUID, update_data: dict[str, Any], session: AsyncSession = None) -> T:
         """Update an object by its ID."""
         session = session or self.session
-        instance = await self.get_or_404(id_, session)
+        instance = await self.get_or_404(uuid_, session)
 
         for key, value in update_data.items():
             setattr(instance, key, value)
@@ -102,10 +103,10 @@ class BaseDatabaseManager:
         else:
             return await self.update(id_, obj_data, session=session)
 
-    async def delete(self, obj_id: int, session: AsyncSession = None) -> T:
+    async def delete(self, obj_uuid: UUID, session: AsyncSession = None) -> T:
         """Delete an object by its ID."""
         session = session or self.session
-        instance = await self.get_or_404(obj_id, session)
+        instance = await self.get_or_404(obj_uuid, session)
 
         await session.delete(instance)
         await session.commit()
