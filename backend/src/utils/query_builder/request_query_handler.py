@@ -94,7 +94,7 @@ class RequestQueryHandler:
 
         return PaginationMetaSchema(
             **{
-                "data": jsonable_encoder(paginator),
+                "data": None,
                 "per_page": paginator.per_page,
                 "page": paginator.page,
                 "total": total_items,

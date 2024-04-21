@@ -1,25 +1,10 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import List
 from uuid import UUID
 
 from pydantic import BaseModel
 
-from src.core.enums import GenderTypeEnum
-
-if TYPE_CHECKING:
-    from src.models.theatrical_roles import TheatricalRole
-
-
-class UserBase(BaseModel):
-    first_name: str
-    last_name: str
-    email: str
-    gender: GenderTypeEnum
-    phone_number: str
-    birth_date: datetime | None = None
-    is_actor: bool = True
-    is_admin: bool = False
-    is_director: bool = False
+from src.core.schemas.user_base.base import UserBase
 
 
 class UserRead(UserBase):
@@ -30,8 +15,7 @@ class UserRead(UserBase):
     instagram_link: str | None = None
     created_at: datetime
     updated_at: datetime
-
-    # theatrical_role: list[str] #need to implement
+    theatrical_role: list[UUID]
 
     class Config:
         from_attributes = True
@@ -46,9 +30,9 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    first_name: Optional[str]
-    last_name: Optional[str]
-    email: Optional[str]
-    free_dates: Optional[list[str] | None] = None
-    phone_number: Optional[str]
-    theatrical_role: Optional[object]  # need to implement
+    first_name: str | None = None
+    last_name: str | None = None
+    email: str | None = None
+    free_dates: list[str] | None = None
+    phone_number: str | None = None
+    theatrical_role: List[UUID] = None

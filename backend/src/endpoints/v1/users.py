@@ -12,28 +12,22 @@ from src.core.schemas.user.response import (
     PaginationResponseSchema,
     UserUpdateResponseSchema,
 )
-from src.core.schemas import MessageResponseSchema
+from src.core.schemas import MessageResponseSchema, UserCreate, QueryParameters
 from src.core.deps import with_async_session
 from src.core.schemas import ControllerConfig
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-def get_user_service(session: AsyncSession = Depends(with_async_session)):
-    return UserService(session=session)
-
-
-def user_service_pagination(
+def get_user_service(
     session: AsyncSession = Depends(with_async_session), config: ControllerConfig = Depends(ControllerConfig)
 ):
     return UserService(session=session, config=config)
 
 
-@router.get("", summary="get users", response_model=PaginationResponseSchema)
-async def users(user_service: UserService = Depends(user_service_pagination)):
-    users_res_test = await user_service.list_users()
-
-    return users_res_test
+@router.get("/", summary="get users", response_model=PaginationResponseSchema)
+async def users(query_params: QueryParameters = Depends(), service: UserService = Depends(get_user_service)):
+    return await service.list_users(query_params=query_params)
 
 
 @router.get("/{id}")
@@ -42,26 +36,19 @@ async def get_user_by_id(user_id: UUID, service: UserService = Depends(get_user_
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return {"data": user}
+    return await service.retrieve_user(user_id)
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserCreateResponseSchema | MessageResponseSchema)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserCreateResponseSchema)
 async def create_user(user: UserCreateResponseSchema, service: UserService = Depends(get_user_service)):
-    try:
-        user_obj = await service.create_user(user)
-        return {"data": user_obj}
-    except sqlalchemy.exc.IntegrityError as e:
-        logging.error(e)
-        return {"message": "Failed to create user"}
+    return await service.create_user(user)
 
 
 @router.patch("/{id}")
 async def update_user(
     user_id: UUID, user: UserUpdateResponseSchema, user_service: UserService = Depends(get_user_service)
 ):
-    result = await user_service.update_user(user_id, user)
-
-    return {"data": user}
+    return await user_service.update_user(user_id, user)
 
 
 @router.delete("/{id}", response_model=MessageResponseSchema)
