@@ -13,14 +13,6 @@ from src.core.schemas.request_log import (
     RequestLogHttpSchema,
     RequestLogSchema,
 )
-from src.core.schemas.theatrical_role import (
-    TheatricalRoleBase,
-    TheatricalRoleCreate,
-    TheatricalRoleListResponseSchema,
-    TheatricalRoleRead,
-    TheatricalRoleResponseSchema,
-    TheatricalRoleUpdate,
-)
 from src.core.schemas.user import (
     UserBase,
     UserCreate,
@@ -43,12 +35,6 @@ __all__ = (
     "RequestLogHttpSchema",
     "RequestLogSchema",
     "SortField",
-    "TheatricalRoleBase",
-    "TheatricalRoleCreate",
-    "TheatricalRoleRead",
-    "TheatricalRoleUpdate",
-    "TheatricalRoleResponseSchema",
-    "TheatricalRoleListResponseSchema",
     "UserBase",
     "UserCreate",
     "UserRead",

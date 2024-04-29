@@ -10,4 +10,4 @@ from sqlalchemy.orm import Mapped, declared_attr, mapped_column
 class BaseModel:
     __abstract__ = True
 
-    id: Mapped[UUID] = mapped_column(primary_key=True, default=lambda: str(uuid4()), nullable=False)
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
