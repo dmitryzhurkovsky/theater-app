@@ -8,7 +8,9 @@ Create Date: 2024-04-27 17:01:33.476873
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import func
-from sqlalchemy.dialects import postgresql
+
+from src.core.database.utils import drop_enum, get_enum
+from src.core.enums import GenreTypeEnum
 
 # revision identifiers, used by Alembic.
 revision = "5c387b42a9fc"
@@ -26,20 +28,7 @@ def upgrade() -> None:
         sa.Column("image", sa.String()),
         sa.Column("description", sa.String(length=1024)),
         sa.Column("about_author", sa.String(length=1024)),
-        sa.Column(
-            "genre",
-            sa.Enum(
-                "COMEDY",
-                "TRAGEDY",
-                "DRAMA",
-                "FARCE",
-                "MUSICAL",
-                "THRILLER",
-                "POLITICAL",
-                name="genretypeenum",
-            ),
-            nullable=False,
-        ),
+        sa.Column("genre", get_enum("genre_type_enum", GenreTypeEnum), nullable=False),
         sa.Column("age", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("annotation", sa.String(length=1024)),
         sa.Column("recommendations", sa.JSON()),
@@ -64,14 +53,4 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_table("performances")
 
-    genretypeenum = postgresql.ENUM(
-        "COMEDY",
-        "TRAGEDY",
-        "DRAMA",
-        "FARCE",
-        "MUSICAL",
-        "THRILLER",
-        "POLITICAL",
-        name="genretypeenum",
-    )
-    genretypeenum.drop(op.get_bind())
+    drop_enum("genre_type_enum")

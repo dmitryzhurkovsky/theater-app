@@ -12,6 +12,9 @@ from alembic import op
 from sqlalchemy import func
 from sqlalchemy.dialects import postgresql
 
+from src.core.database.utils import drop_enum, get_enum
+from src.core.enums import GenderTypeEnum, UserRoleTypeEnum
+
 # revision identifiers, used by Alembic.
 revision: str = "6616b8872c4a"
 down_revision: Union[str, None] = None
@@ -25,17 +28,13 @@ def upgrade() -> None:
         sa.Column("id", sa.Uuid(), server_default=func.gen_random_uuid()),
         sa.Column("first_name", sa.String(), nullable=False),
         sa.Column("last_name", sa.String(), nullable=False),
-        sa.Column("gender", sa.Enum("MAN", "WOMAN", "NA", name="gendertypeenum"), nullable=False),
+        sa.Column("gender", get_enum("gender_type_enum", GenderTypeEnum), nullable=False),
         sa.Column("phone_number", sa.String(), nullable=False),
         sa.Column("photo", sa.String()),
         sa.Column("birth_date", sa.Date()),
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("password", sa.String(), nullable=False),
-        sa.Column(
-            "user_roles",
-            postgresql.ARRAY(sa.Enum("ADMIN", "ACTOR", "DIRECTOR", "VIEWER", name="userroletypeenum")),
-            nullable=False,
-        ),
+        sa.Column("user_roles", postgresql.ARRAY(get_enum("user_role_type_enum", UserRoleTypeEnum)), nullable=False),
         sa.Column("viber_link", sa.String()),
         sa.Column("telegram_link", sa.String()),
         sa.Column("instagram_link", sa.String()),
@@ -60,8 +59,5 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_table("users")
 
-    gendertypeenum = postgresql.ENUM("MAN", "WOMAN", "NA", name="gendertypeenum")
-    gendertypeenum.drop(op.get_bind())
-
-    userroletypeenum = postgresql.ENUM("ADMIN", "ACTOR", "DIRECTOR", "VIEWER", name="userroletypeenum")
-    userroletypeenum.drop(op.get_bind())
+    drop_enum("gender_type_enum")
+    drop_enum("user_role_type_enum")

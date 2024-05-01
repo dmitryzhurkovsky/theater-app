@@ -10,6 +10,9 @@ from alembic import op
 from sqlalchemy import func
 from sqlalchemy.dialects import postgresql
 
+from src.core.database.utils import drop_enum, get_enum
+from src.core.enums import NotificationTypeEnum
+
 # revision identifiers, used by Alembic.
 revision = "c7d5900a949a"
 down_revision = "c24e31c8b4e1"
@@ -24,7 +27,7 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Uuid(), nullable=False),
         sa.Column("event_id", sa.Uuid(), nullable=False),
         sa.Column("is_read", sa.Boolean(), nullable=False, server_default=sa.false()),
-        sa.Column("type", sa.Enum("INFO", "APPROVAL", name="notificationtypeenum"), nullable=False),
+        sa.Column("type", get_enum("notification_type_enum", NotificationTypeEnum), nullable=False),
         sa.Column("text", sa.String(length=1024)),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
@@ -41,5 +44,4 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_table("notifications")
 
-    notificationtypeenum = postgresql.ENUM("INFO", "APPROVAL", name="notificationtypeenum")
-    notificationtypeenum.drop(op.get_bind())
+    drop_enum("notification_type_enum")

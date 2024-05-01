@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import JSON, ForeignKey, String
+from sqlalchemy import JSON, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.enums import GenreTypeEnum
@@ -20,7 +20,10 @@ class Performance(BaseModel, TimestampAbstractModel):
     image: Mapped[str]
     description: Mapped[str] = mapped_column(String(1024))
     about_author: Mapped[str] = mapped_column(String(1024))
-    genre: Mapped[GenreTypeEnum] = mapped_column(nullable=False)
+    genre: Mapped[GenreTypeEnum] = mapped_column(
+        Enum(*[genre.value for genre in GenreTypeEnum], name="genre_type_enum"),
+        nullable=False,
+    )
     age: Mapped[int] = mapped_column(default=0, nullable=False)
     annotation: Mapped[str] = mapped_column(String(1024))
     recommendations: Mapped[dict] = mapped_column(type_=JSON)

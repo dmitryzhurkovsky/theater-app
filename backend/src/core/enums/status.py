@@ -2,7 +2,7 @@ from src.core.enums.base import BaseEnum
 
 
 class StatusTypeEnum(BaseEnum):
-    PENDING = "pending"
-    ACTOR_APPROVED = "actor_approved"
-    DIRECTOR_APPROVED = "director_approved"
-    REJECTED = "rejected"
+    PENDING = "Pending"
+    ACTOR_APPROVED = "Actor approved"
+    DIRECTOR_APPROVED = "Director approved"
+    REJECTED = "Rejected"

@@ -8,7 +8,9 @@ Create Date: 2024-04-28 12:23:53.706981
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import func
-from sqlalchemy.dialects import postgresql
+
+from src.core.database.utils import drop_enum, get_enum
+from src.core.enums import EventTypeEnum, StatusTypeEnum
 
 # revision identifiers, used by Alembic.
 revision = "c24e31c8b4e1"
@@ -24,25 +26,8 @@ def upgrade() -> None:
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("date", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
         sa.Column("place", sa.String(), nullable=False, server_default="scena"),
-        sa.Column(
-            "event_type",
-            sa.Enum(
-                "SCRIPT_READING",
-                "REHEARSAL",
-                "DANCING_REHEARSAL",
-                "FINAL_REHEARSAL",
-                "PERFORMANCE",
-                "LEVEL",
-                "CHILDREN_ACTIVITY",
-                name="eventtypeenum",
-            ),
-            nullable=False,
-        ),
-        sa.Column(
-            "status",
-            sa.Enum("PENDING", "ACTOR_APPROVED", "DIRECTOR_APPROVED", "REJECTED", name="statustypeenum"),
-            nullable=False,
-        ),
+        sa.Column("event_type", get_enum("event_type_enum", EventTypeEnum), nullable=False),
+        sa.Column("status", get_enum("status_type_enum", StatusTypeEnum), nullable=False),
         sa.Column("performance_id", sa.Uuid(), nullable=False),
         sa.Column("duration", sa.Integer(), nullable=False, server_default="60"),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
@@ -82,19 +67,5 @@ def downgrade() -> None:
     op.drop_table("event_confirmations")
     op.drop_table("events")
 
-    eventtypeenum = postgresql.ENUM(
-        "SCRIPT_READING",
-        "REHEARSAL",
-        "DANCING_REHEARSAL",
-        "FINAL_REHEARSAL",
-        "PERFORMANCE",
-        "LEVEL",
-        "CHILDREN_ACTIVITY",
-        name="eventtypeenum",
-    )
-    eventtypeenum.drop(op.get_bind())
-
-    statustypeenum = postgresql.ENUM(
-        "PENDING", "ACTOR_APPROVED", "DIRECTOR_APPROVED", "REJECTED", name="statustypeenum"
-    )
-    statustypeenum.drop(op.get_bind())
+    drop_enum("event_type_enum")
+    drop_enum("status_type_enum")
