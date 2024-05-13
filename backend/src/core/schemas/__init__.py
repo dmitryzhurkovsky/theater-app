@@ -13,14 +13,7 @@ from src.core.schemas.request_log import (
     RequestLogHttpSchema,
     RequestLogSchema,
 )
-from src.core.schemas.user import (
-    UserBase,
-    UserCreate,
-    UserListResponseSchema,
-    UserRead,
-    UserResponseSchema,
-    UserUpdate,
-)
+from src.core.schemas.user import UserBase, UserCreate, UserRead, UserUpdate
 
 __all__ = (
     "BaseResponseSchema",
@@ -39,6 +32,4 @@ __all__ = (
     "UserCreate",
     "UserRead",
     "UserUpdate",
-    "UserResponseSchema",
-    "UserListResponseSchema",
 )

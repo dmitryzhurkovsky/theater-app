@@ -1,8 +1,7 @@
 from datetime import date, datetime
-from typing import TYPE_CHECKING
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from src.core.enums import GenderTypeEnum, UserRoleTypeEnum
 
@@ -13,11 +12,13 @@ class UserBase(BaseModel):
     gender: GenderTypeEnum
     phone_number: str
     birth_date: date | None = None
-    email: str
+    email: EmailStr
     user_roles: list[UserRoleTypeEnum]
 
 
 class UserRead(UserBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     photo: str | None = None
     viber_link: str | None = None
@@ -27,8 +28,7 @@ class UserRead(UserBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    # TODO: add theatrical_roles
 
 
 class UserCreate(UserBase):
@@ -39,6 +39,22 @@ class UserCreate(UserBase):
     instagram_link: str | None = None
     free_dates: list[date] | None = None
 
+    @field_validator("free_dates")
+    def validate_free_dates(cls, value):
+        if value:
+            for free_date in value:
+                if free_date < date.today():
+                    raise ValueError(""" Field "free_dates" cannot contain previos days """)
+
+        return value
+
 
 class UserUpdate(UserCreate):
+    first_name: str | None = None
+    last_name: str | None = None
+    gender: GenderTypeEnum | None = None
+    phone_number: str | None = None
+    birth_date: date | None = None
+    email: EmailStr | None = None
+    user_roles: list[UserRoleTypeEnum] | None = None
     password: str | None = None
