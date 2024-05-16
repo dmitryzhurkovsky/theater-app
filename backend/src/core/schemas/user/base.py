@@ -39,8 +39,8 @@ class UserCreate(UserBase):
     instagram_link: str | None = None
     free_dates: list[date] | None = None
 
-    @field_validator("free_dates")
-    def validate_free_dates(cls, value):
+    @field_validator("free_dates", mode="after")
+    def validate_free_dates(cls, value: list[date] | None) -> list[date] | None:
         if value:
             for free_date in value:
                 if free_date < date.today():
