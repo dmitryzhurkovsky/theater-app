@@ -1,4 +1,5 @@
 from typing import Any, Sequence, TypeVar
+from uuid import UUID
 
 import structlog
 from sqlalchemy import select
@@ -42,14 +43,14 @@ class BaseDatabaseManager:
         """Provides query modification based on passed filters argument"""
         return get_by(self.model, query=query, criteria=filters)
 
-    async def get(self, id_: int) -> T:
+    async def get(self, id_: UUID) -> T:
         """Retrieve an object by its ID"""
         stmt = select(self.model).where(self.model.id == id_)
         result = await self.session.execute(stmt)
 
         return result.scalar()
 
-    async def get_or_404(self, id_: int, session: AsyncSession = None) -> T:
+    async def get_or_404(self, id_: UUID, session: AsyncSession = None) -> T:
         """Retrieve an object by its ID and Raise NotFoundError if not found."""
         session = session or self.session
 
@@ -73,7 +74,7 @@ class BaseDatabaseManager:
 
         return obj
 
-    async def update(self, id_: int, update_data: dict[str, Any], session: AsyncSession = None) -> T:
+    async def update(self, id_: UUID, update_data: dict[str, Any], session: AsyncSession = None) -> T:
         """Update an object by its ID."""
         session = session or self.session
         instance = await self.get_or_404(id_, session)
@@ -81,15 +82,12 @@ class BaseDatabaseManager:
         for key, value in update_data.items():
             setattr(instance, key, value)
 
-        try:
-            await session.commit()
-            await session.refresh(instance)
-        except IntegrityError as e:
-            await self._handle_integrity_error(e, session)
+        await session.commit()
+        await session.refresh(instance)
 
         return instance
 
-    async def upsert(self, id_: int, obj_data: dict[str, Any], session: AsyncSession = None) -> T:
+    async def upsert(self, id_: UUID, obj_data: dict[str, Any], session: AsyncSession = None) -> T:
         """Update an object if it exists, otherwise create it."""
         session = session or self.session
 
@@ -102,7 +100,7 @@ class BaseDatabaseManager:
         else:
             return await self.update(id_, obj_data, session=session)
 
-    async def delete(self, obj_id: int, session: AsyncSession = None) -> T:
+    async def delete(self, obj_id: UUID, session: AsyncSession = None) -> T:
         """Delete an object by its ID."""
         session = session or self.session
         instance = await self.get_or_404(obj_id, session)
