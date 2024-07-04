@@ -13,7 +13,14 @@ from src.core.schemas.request_log import (
     RequestLogHttpSchema,
     RequestLogSchema,
 )
-from src.core.schemas.user import UserBase, UserCreate, UserRead, UserUpdate
+from src.core.schemas.user import (
+    UserBase,
+    UserCreate,
+    UserCreateWithOAuth,
+    UserRead,
+    UserRegister,
+    UserUpdate,
+)
 
 __all__ = (
     "BaseResponseSchema",
@@ -30,6 +37,8 @@ __all__ = (
     "SortField",
     "UserBase",
     "UserCreate",
+    "UserCreateWithOAuth",
     "UserRead",
     "UserUpdate",
+    "UserRegister",
 )

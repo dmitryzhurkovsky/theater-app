@@ -18,6 +18,7 @@ export PRINT_HELP_PYSCRIPT
 COMPOSE_FILE ?= ../docker-compose.yml
 COMPOSE_TEST_FILE ?= docker-compose.test.yml
 ALEMBIC_VERSION ?= 4c9e3982a64b
+CORE_DIR ?= src/core
 
 help: ## List available commands
 	@python3 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -105,3 +106,11 @@ up_test: ## Start test services of docker-compose.test.yml
 
 down_test: ## Stop test services of docker-compose.test.yml
 	docker-compose --file $(COMPOSE_FILE) --file $(COMPOSE_TEST_FILE) down
+
+
+generate-private-rsa: ## Generate RSA private key
+	openssl genrsa -out $(CORE_DIR)/signatures/private.pem 2048
+
+generate-public-rsa: ## Generate RSA public key
+	openssl rsa -in $(CORE_DIR)/signatures/private.pem -outform PEM \
+  		-pubout -out $(CORE_DIR)/signatures/public.pem
