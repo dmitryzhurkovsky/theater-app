@@ -10,16 +10,17 @@ from src.core.schemas import UserCreate, UserCreateWithOAuth, UserRegister, User
 from src.db_managers import UserManager
 from src.models import User
 from src.services.base import BaseService
-from src.utils.security.jwt_token import jwt_token
+from src.utils.security.jwt_token import JWTTokenBuilder
 from src.utils.security.password_handler import make_password_hash, verify_password
 
 LOG = structlog.stdlib.get_logger()
 
 
 class UserService(BaseService):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.user_manager = UserManager(self.session)
+        self.jwt_token_builder = JWTTokenBuilder()
 
     async def create_user(self, user: UserCreate) -> User | dict[str, str]:
         try:
@@ -43,7 +44,7 @@ class UserService(BaseService):
         return {"message": "User was successfully deleted"} if isinstance(obj, User) else obj
 
     async def check_if_user_exists(self, email: str) -> Never | None:
-        if await self.user_manager.get_by_email(filters={"email": email}):
+        if await self.user_manager.get_by(filters={"email": email}):
             LOG.error(f"User with {email=} already exists exception")
             raise UserAlreadyExistsException()
 
@@ -55,8 +56,9 @@ class UserService(BaseService):
         return await self.create_user(user=user)
 
     async def authenticate_user(self, email: str, password: str) -> User | bool:
-        user = await self.user_manager.get_by_email(filters={"email": email})
-        if not user or not verify_password(password, user.password):
+        if not (user := await self.user_manager.get_by(filters={"email": email})) or not verify_password(
+            password, user.password
+        ):
             return False
         return user
 
@@ -64,8 +66,7 @@ class UserService(BaseService):
         if not (user := await self.authenticate_user(email, password)):
             LOG.error(f"Authentication error for user {email=}")
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Incorrect email or password")
-
-        return jwt_token.get_tokens(user=user)
+        return self.jwt_token_builder.get_tokens(user=user)
 
     async def create_user_with_oauth(self, user_info: dict[str, Any]) -> User | dict[str, str]:
         await self.check_if_user_exists(email=user_info.get("email", ""))

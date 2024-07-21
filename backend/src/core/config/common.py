@@ -73,11 +73,16 @@ class AuthSettings(BaseSettings):
     # Google settings
     GOOGLE_CLIENT_ID: str = env.str("GOOGLE_CLIENT_ID", "google_cloud_id")
     GOOGLE_CLIENT_SECRET: str = env.str("GOOGLE_CLIENT_SECRET", "google_client_secret")
+    GOOGLE_CLIENT_SCOPES: list[str] = [
+        "openid",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+    ]
     GOOGLE_CLIENT_SECRETS_PATH: Path = PROJECT_DIR / "security" / "google_client_secrets.json"
 
     # JWT settings
-    PRIVATE_KEY_PATH: Path = PROJECT_DIR / "security" / "private.pem"
-    PUBLIC_KEY_PATH: Path = PROJECT_DIR / "security" / "public.pem"
+    PRIVATE_KEY_PATH: str = (PROJECT_DIR / "security" / "private.pem").read_text()
+    PUBLIC_KEY_PATH: str = (PROJECT_DIR / "security" / "public.pem").read_text()
     ALGORITHM: str = env.str("ALGORITHM", "RS256")
     TOKEN_ISSUER: str = env.str("TOKEN_ISSUER", "theater_app")
     ACCESS_TOKEN_EXPIRE_MINUTES: timedelta = timedelta(minutes=15)
@@ -113,7 +118,7 @@ class Settings(BaseSettings):
     LOG_SETTINGS: LogSettings = LogSettings()
 
     # Auth settings
-    AUTH_SETTINGS: AuthSettings = AuthSettings()
+    AUTH: AuthSettings = AuthSettings()
 
     class Config:
         case_sensitive = True

@@ -2,7 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
-from src.core.deps import get_user_from_access_token, get_user_service
+from src.core.deps import get_auth_user, get_user_service
 from src.core.schemas import MessageResponseSchema, UserCreate, UserRead, UserUpdate
 from src.services import SecurityService, UserService
 
@@ -15,7 +15,7 @@ async def create_user(user: UserCreate, service: UserService = Depends(get_user_
 
 
 @router.get("/me", response_model=UserRead, summary="Get current user")
-async def get_user_me(user: SecurityService = Depends(get_user_from_access_token)):
+async def get_user_me(user: SecurityService = Depends(get_auth_user)):
     return user
 
 

@@ -4,6 +4,6 @@ from src.services.users import UserService
 
 __all__ = (
     "BaseService",
-    "UserService",
     "SecurityService",
+    "UserService",
 )

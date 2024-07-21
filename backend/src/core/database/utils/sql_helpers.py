@@ -5,7 +5,7 @@ from sqlalchemy.sql import Select
 from src.models import BaseModel
 
 
-def get_by(table: BaseModel, query: Select, criteria: dict[str, Any]):
+def get_by(table: BaseModel, query: Select, criteria: dict[str, Any]) -> Select:
     """
     Get data by criteria
 

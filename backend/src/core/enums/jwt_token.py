@@ -1,6 +1,6 @@
 from src.core.enums.base import BaseEnum
 
 
-class TokenEnum(BaseEnum):
+class TokenTypeEnum(BaseEnum):
     ACCESS = "access"
     REFRESH = "refresh"

@@ -5,13 +5,13 @@ from typing import Any
 import jwt
 
 from src.core.config.settings import settings
-from src.core.enums.jwt_token import TokenEnum
+from src.core.enums.jwt_token import TokenTypeEnum
 from src.models import User
 
 
-class JWTToken:
+class JWTTokenBuilder:
     """
-    JWTToken is a utility class for handling JSON Web Tokens (JWT) for authentication and authorization purposes.
+    JWTTokenBuilder is a utility class for building JSON Web Tokens (JWT) for authentication and authorization purposes.
 
     Attributes:
         private_key (str): The private key used for signing the JWT tokens.
@@ -22,12 +22,12 @@ class JWTToken:
         expire_days (timedelta): The expiration time for refresh tokens.
     """
 
-    private_key: str = settings.AUTH_SETTINGS.PRIVATE_KEY_PATH.read_text()
-    public_key: str = settings.AUTH_SETTINGS.PUBLIC_KEY_PATH.read_text()
-    algorithm: str = settings.AUTH_SETTINGS.ALGORITHM
-    issuer: str = settings.AUTH_SETTINGS.TOKEN_ISSUER
-    expire_minutes: timedelta = settings.AUTH_SETTINGS.ACCESS_TOKEN_EXPIRE_MINUTES
-    expire_days: timedelta = settings.AUTH_SETTINGS.REFRESH_TOKEN_EXPIRE_DAYS
+    private_key: str = settings.AUTH.PRIVATE_KEY_PATH
+    public_key: str = settings.AUTH.PUBLIC_KEY_PATH
+    algorithm: str = settings.AUTH.ALGORITHM
+    issuer: str = settings.AUTH.TOKEN_ISSUER
+    expire_minutes: timedelta = settings.AUTH.ACCESS_TOKEN_EXPIRE_MINUTES
+    expire_days: timedelta = settings.AUTH.REFRESH_TOKEN_EXPIRE_DAYS
 
     @cached_property
     def set_jwt_token_header(self) -> dict[str, str]:
@@ -39,7 +39,7 @@ class JWTToken:
         """
         return {"typ": "JWT", "alg": self.algorithm}
 
-    def update_payload(self, payload: dict, expire: timedelta) -> dict:
+    def update_payload(self, payload: dict[str, Any], expire: timedelta) -> dict[str, Any]:
         """
         Updates the given payload with expiration (`exp`), not-before (`nbf`),
         and issued-at (`iat`) times, and adds the issuer (`iss`).
@@ -51,14 +51,15 @@ class JWTToken:
         Returns:
             dict: The updated payload with `exp`, `nbf`, `iat`, and `iss` fields.
         """
+        datetime_now: datetime = datetime.now()
+
         payload_copy = payload.copy()
-        expire = datetime.now() + expire
         payload_copy.update(
             {
                 "iss": self.issuer,
-                "exp": expire,
-                "nbf": datetime.now(),
-                "iat": datetime.now(),
+                "exp": datetime_now + expire,
+                "nbf": datetime_now,
+                "iat": datetime_now,
             }
         )
         return payload_copy
@@ -74,10 +75,9 @@ class JWTToken:
         Returns:
             str: The encoded JWT token.
         """
-        to_encode = self.update_payload(payload=payload, expire=expire)
         return jwt.encode(
             headers=self.set_jwt_token_header,
-            payload=to_encode,
+            payload=self.update_payload(payload=payload, expire=expire),
             key=self.private_key,
             algorithm=self.algorithm,
         )
@@ -92,14 +92,16 @@ class JWTToken:
         Returns:
             str: The encoded access token.
         """
-        access_token_payload = {
-            "type": TokenEnum.ACCESS.value,
-            "sub": user.email,
-            "user_id": str(user.id),
-        }
-        return self.create_jwt_token(payload=access_token_payload, expire=self.expire_minutes)
+        return self.create_jwt_token(
+            payload={
+                "type": TokenTypeEnum.ACCESS.value,
+                "sub": user.email,
+                "user_id": str(user.id),
+            },
+            expire=self.expire_minutes,
+        )
 
-    def verify_token(self, token: str) -> dict[str, Any]:
+    def decode_token(self, token: str) -> dict[str, Any]:
         """
         Verifies the given access token and returns the decoded payload.
 
@@ -121,8 +123,10 @@ class JWTToken:
         Returns:
             str: The encoded refresh token.
         """
-        refresh_token_payload = {"type": TokenEnum.REFRESH.value, "sub": user.email}
-        return self.create_jwt_token(payload=refresh_token_payload, expire=self.expire_days)
+        return self.create_jwt_token(
+            payload={"type": TokenTypeEnum.REFRESH.value, "sub": user.email},
+            expire=self.expire_days,
+        )
 
     def get_tokens(self, user: User) -> dict[str, str]:
         """
@@ -135,6 +139,3 @@ class JWTToken:
             dict[str, str]: A dictionary containing the access and refresh tokens.
         """
         return {"access_token": self.create_access_token(user), "refresh_token": self.create_refresh_token(user)}
-
-
-jwt_token = JWTToken()
