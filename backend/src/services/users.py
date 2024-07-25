@@ -44,7 +44,7 @@ class UserService(BaseService):
         return {"message": "User was successfully deleted"} if isinstance(obj, User) else obj
 
     async def check_if_user_exists(self, email: str) -> Never | None:
-        if await self.user_manager.get_by(filters={"email": email}):
+        if await self.user_manager.get_by(filters={"email": email}, raise_error=False):
             LOG.error(f"User with {email=} already exists exception")
             raise UserAlreadyExistsException()
 

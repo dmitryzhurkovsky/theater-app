@@ -1,3 +1,4 @@
+import re
 from datetime import date, datetime
 from uuid import UUID
 
@@ -67,4 +68,19 @@ class UserUpdate(UserCreate):
 
 
 class UserRegister(UserBase):
-    password: str  # TODO: validation for password
+    password: str
+
+    @field_validator("password", mode="after")
+    def check_password(cls, value: str) -> str:
+        if len(value) < 8:
+            raise ValueError("Password must be at least 8 characters long")
+        if not re.search(r"[A-Z]", value):
+            raise ValueError("Password must contain at least one uppercase letter")
+        if not re.search(r"[a-z]", value):
+            raise ValueError("Password must contain at least one lowercase letter")
+        if not re.search(r"[0-9]", value):
+            raise ValueError("Password must contain at least one digit")
+        if not re.search(r"[\W_]", value):
+            raise ValueError("Password must contain at least one special character")
+
+        return value

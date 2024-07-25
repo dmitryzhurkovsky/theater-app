@@ -11,7 +11,7 @@ from src.models import User
 class UserManager(BaseDatabaseManager):
     model = User
 
-    async def get_by(self, filters: dict[str, Any], raise_error: bool = True) -> User:
+    async def get_by(self, filters: dict[str, Any], raise_error: bool = True) -> User | None:
         """
         Retrieves a User instance based on the provided filters.
 
