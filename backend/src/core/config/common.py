@@ -1,4 +1,6 @@
 import os
+from datetime import timedelta
+from pathlib import Path
 from urllib.parse import quote_plus
 
 from environs import Env
@@ -8,6 +10,7 @@ from pydantic_settings import BaseSettings
 from src.core.enums import EnvironmentEnum, LogLevelEum
 
 POSTGRESQL_PATTERN = "postgresql+{}://{}:{}@{}:{}/{}"
+PROJECT_DIR = Path(__file__).parent.parent
 CORS_ALLOW_ALL = '["*"]'
 
 env = Env()
@@ -64,6 +67,31 @@ class LogSettings(BaseSettings):
         case_sensitive = True
 
 
+class AuthSettings(BaseSettings):
+    OAUTHLIB_INSECURE_TRANSPORT: bool = env.bool("OAUTHLIB_INSECURE_TRANSPORT", "False")
+
+    # Google settings
+    GOOGLE_CLIENT_ID: str = env.str("GOOGLE_CLIENT_ID", "google_cloud_id")
+    GOOGLE_CLIENT_SECRET: str = env.str("GOOGLE_CLIENT_SECRET", "google_client_secret")
+    GOOGLE_CLIENT_SCOPES: list[str] = [
+        "openid",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+    ]
+    GOOGLE_CLIENT_SECRETS_PATH: Path = PROJECT_DIR / "security" / "google_client_secrets.json"
+
+    # JWT settings
+    PRIVATE_KEY_PATH: str = (PROJECT_DIR / "security" / "private.pem").read_text()
+    PUBLIC_KEY_PATH: str = (PROJECT_DIR / "security" / "public.pem").read_text()
+    ALGORITHM: str = env.str("ALGORITHM", "RS256")
+    TOKEN_ISSUER: str = env.str("TOKEN_ISSUER", "theater_app")
+    ACCESS_TOKEN_EXPIRE_MINUTES: timedelta = timedelta(minutes=15)
+    REFRESH_TOKEN_EXPIRE_DAYS: timedelta = timedelta(days=15)
+
+    class Config:
+        case_sensitive = True
+
+
 class Settings(BaseSettings):
     # Core settings
     VERSION: str = "1.0.0"
@@ -88,6 +116,9 @@ class Settings(BaseSettings):
 
     # Logs settings
     LOG_SETTINGS: LogSettings = LogSettings()
+
+    # Auth settings
+    AUTH: AuthSettings = AuthSettings()
 
     class Config:
         case_sensitive = True

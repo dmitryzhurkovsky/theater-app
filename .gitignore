@@ -20,3 +20,7 @@ __pycache__/
 
 .python-version
 .docker/
+
+# Security
+/backend/src/core/security/private.pem
+/backend/src/core/security/public.pem

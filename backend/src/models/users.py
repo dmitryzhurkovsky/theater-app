@@ -20,11 +20,11 @@ class User(BaseModel, TimestampAbstractModel):
     gender: Mapped[GenderTypeEnum] = mapped_column(
         Enum(*[gender.value for gender in GenderTypeEnum], name="gender_type_enum"), nullable=False
     )
-    phone_number: Mapped[str] = mapped_column(nullable=False, unique=True)
+    phone_number: Mapped[str] = mapped_column(nullable=True, unique=True)
     photo: Mapped[str]
     birth_date: Mapped[date] = mapped_column(Date)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
-    password: Mapped[str] = mapped_column(nullable=False)
+    password: Mapped[str] = mapped_column(nullable=True)
     user_roles: Mapped[list[UserRoleTypeEnum]] = mapped_column(
         pg.ARRAY(Enum(*[user_role.value for user_role in UserRoleTypeEnum], name="user_role_type_enum")),
         nullable=False,
