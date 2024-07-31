@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database.utils import get_by
 from src.core.enums import SortOrder
-from src.core.exceptions import NotFoundError
+from src.core.exceptions import NotFoundError, OperationFailedError
 from src.models import BaseModel
 from src.utils import OnlyFieldsQueryBuilder
 
@@ -67,10 +67,13 @@ class BaseDatabaseManager:
         session = session or self.session
         obj = self.model(**obj_data)
 
-        session.add(obj)
-
-        await session.commit()
-        await session.refresh(obj)
+        try:
+            session.add(obj)
+            await session.commit()
+            await session.refresh(obj)
+        except IntegrityError as ex:
+            LOG.error(f"Failed to create instance of class {self.model.__name__}. {ex}")
+            raise OperationFailedError(detail=f"Failed to create instance of class {self.model.__name__}.")
 
         return obj
 
@@ -82,8 +85,12 @@ class BaseDatabaseManager:
         for key, value in update_data.items():
             setattr(instance, key, value)
 
-        await session.commit()
-        await session.refresh(instance)
+        try:
+            await session.commit()
+            await session.refresh(instance)
+        except IntegrityError as ex:
+            LOG.error(f"Failed to update instance of class {self.model.__name__}. {ex}")
+            raise OperationFailedError(detail=f"Failed to update instance of class {self.model.__name__}.")
 
         return instance
 
