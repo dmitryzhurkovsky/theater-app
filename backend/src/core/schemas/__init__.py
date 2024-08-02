@@ -8,6 +8,11 @@ from src.core.schemas.common import (
     QueryParameters,
     SortField,
 )
+from src.core.schemas.performance import (
+    PerformanceCreate,
+    PerformanceRead,
+    PerformanceUpdate,
+)
 from src.core.schemas.request_log import (
     RequestLogClientSchema,
     RequestLogHttpSchema,
@@ -41,4 +46,7 @@ __all__ = (
     "UserRead",
     "UserUpdate",
     "UserRegister",
+    "PerformanceCreate",
+    "PerformanceRead",
+    "PerformanceUpdate",
 )

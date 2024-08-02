@@ -11,7 +11,7 @@ from src.core.config.settings import settings
 from src.core.database.db import postgres_async_session
 from src.core.schemas import ControllerConfig
 from src.models import User
-from src.services import BaseService, SecurityService, UserService
+from src.services import BaseService, PerformanceService, SecurityService, UserService
 
 oauth2_scheme: OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="v1/auth/login")
 google_client_secrets: Path = settings.AUTH.GOOGLE_CLIENT_SECRETS_PATH
@@ -39,6 +39,10 @@ def with_service(service_cls: type[BaseService], config: ControllerConfig = Cont
 
 def get_user_service(session: AsyncSession = Depends(with_async_session)) -> UserService:
     return UserService(session=session)
+
+
+def get_performance_service(session: AsyncSession = Depends(with_async_session)) -> PerformanceService:
+    return PerformanceService(session=session)
 
 
 def get_security_service(session: AsyncSession = Depends(with_async_session)) -> SecurityService:
