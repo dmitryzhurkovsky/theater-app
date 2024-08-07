@@ -13,6 +13,11 @@ from src.core.schemas.performance import (
     PerformanceRead,
     PerformanceUpdate,
 )
+from src.core.schemas.performance_role import (
+    PerformanceRoleCreate,
+    PerformanceRoleRead,
+    PerformanceRoleUpdate,
+)
 from src.core.schemas.request_log import (
     RequestLogClientSchema,
     RequestLogHttpSchema,
@@ -49,4 +54,7 @@ __all__ = (
     "PerformanceCreate",
     "PerformanceRead",
     "PerformanceUpdate",
+    "PerformanceRoleCreate",
+    "PerformanceRoleRead",
+    "PerformanceRoleUpdate",
 )

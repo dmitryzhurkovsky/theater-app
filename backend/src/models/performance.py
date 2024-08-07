@@ -1,8 +1,8 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 from uuid import UUID
 
 from sqlalchemy import JSON, Enum, ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.enums import GenreTypeEnum
 from src.models import BaseModel, TimestampAbstractModel
@@ -28,3 +28,4 @@ class Performance(BaseModel, TimestampAbstractModel):
     annotation: Mapped[str] = mapped_column(String(1024))
     recommendations: Mapped[dict] = mapped_column(type_=JSON)
     need_admin_approve: Mapped[bool] = mapped_column(default=False)
+    performance_roles: Mapped[List["PerformanceRole"]] = relationship(back_populates="performance", lazy="selectin")

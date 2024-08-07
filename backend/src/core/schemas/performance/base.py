@@ -1,13 +1,15 @@
 from datetime import datetime
-from typing import Any
+from typing import Any, List
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.core.enums import GenreTypeEnum
+from src.core.schemas.performance_role import PerformanceRoleRead
 
 
 class PerformanceBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     title: str
     director_id: UUID
     image: str | None = None
@@ -23,6 +25,7 @@ class PerformanceRead(PerformanceBase):
     id: UUID
     created_at: datetime
     updated_at: datetime
+    performance_roles: List[PerformanceRoleRead] = []
 
 
 class PerformanceCreate(PerformanceBase):

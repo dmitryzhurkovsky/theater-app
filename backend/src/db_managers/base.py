@@ -72,7 +72,7 @@ class BaseDatabaseManager:
             await session.commit()
             await session.refresh(obj)
         except IntegrityError as ex:
-            LOG.error(f"Failed to create instance of class {self.model.__name__}. {ex}")
+            LOG.error(f"Failed to create instance of class {self.model.__name__}. {ex.orig}")
             raise OperationFailedError(detail=f"Failed to create instance of class {self.model.__name__}.")
 
         return obj
@@ -89,7 +89,7 @@ class BaseDatabaseManager:
             await session.commit()
             await session.refresh(instance)
         except IntegrityError as ex:
-            LOG.error(f"Failed to update instance of class {self.model.__name__}. {ex}")
+            LOG.error(f"Failed to update instance of class {self.model.__name__}. {ex.orig}")
             raise OperationFailedError(detail=f"Failed to update instance of class {self.model.__name__}.")
 
         return instance

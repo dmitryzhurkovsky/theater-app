@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.models import BaseModel
 
 if TYPE_CHECKING:
-    from src.models.users import User
+    from backend.src.models.performance import Performance
 
 
 class PerformanceRole(BaseModel):
@@ -15,3 +15,4 @@ class PerformanceRole(BaseModel):
 
     title: Mapped[str] = mapped_column(nullable=False)
     performance_id: Mapped[UUID] = mapped_column(ForeignKey("performances.id"), nullable=False)
+    performance: Mapped["Performance"] = relationship(back_populates="performance_roles")
