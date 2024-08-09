@@ -15,7 +15,7 @@ class PerformanceBase(BaseModel):
     image: str | None = None
     description: str | None = None
     about_author: str | None = None
-    genre: GenreTypeEnum
+    genre: List[GenreTypeEnum]
     age: int = Field(default=0, ge=0)
     annotation: str | None = None
     recommendations: dict[str, Any] | None = None
@@ -35,6 +35,6 @@ class PerformanceCreate(PerformanceBase):
 class PerformanceUpdate(PerformanceBase):
     title: str | None = None
     director_id: UUID | None = None
-    genre: GenreTypeEnum | None = None
+    genre: List[GenreTypeEnum] | None = None
     age: int | None = None
     neeneed_admin_approve: bool | None = None

@@ -1,15 +1,10 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import DateTime, Enum, ForeignKey
+from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.core.enums import EventTypeEnum, StatusTypeEnum
 from src.models import BaseModel, TimestampAbstractModel
-
-if TYPE_CHECKING:
-    from src.models.performance import Performance
 
 
 class Event(BaseModel, TimestampAbstractModel):
@@ -18,12 +13,7 @@ class Event(BaseModel, TimestampAbstractModel):
     name: Mapped[str] = mapped_column(nullable=False)
     date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now, nullable=False)
     place: Mapped[str] = mapped_column(nullable=False, default="scena")
-    event_type: Mapped[EventTypeEnum] = mapped_column(
-        Enum(*[event_type.value for event_type in EventTypeEnum], name="event_type_enum"), nullable=False
-    )
-    status: Mapped[StatusTypeEnum] = mapped_column(
-        Enum(*[status.value for status in StatusTypeEnum], name="status_type_enum"),
-        nullable=False,
-    )
+    event_type: Mapped[str] = mapped_column(nullable=False)
+    status: Mapped[str] = mapped_column(nullable=False)
     performance_id: Mapped[UUID] = mapped_column(ForeignKey("performances.id"), nullable=False)
     duration: Mapped[int] = mapped_column(nullable=False, default=60)

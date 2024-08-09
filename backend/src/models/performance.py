@@ -1,15 +1,14 @@
 from typing import TYPE_CHECKING, List
 from uuid import UUID
 
-from sqlalchemy import JSON, Enum, ForeignKey, String
+from sqlalchemy import JSON, ForeignKey, String
+from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.core.enums import GenreTypeEnum
 from src.models import BaseModel, TimestampAbstractModel
 
 if TYPE_CHECKING:
     from backend.src.models.performance_role import PerformanceRole
-    from src.models.events import Event
 
 
 class Performance(BaseModel, TimestampAbstractModel):
@@ -20,10 +19,7 @@ class Performance(BaseModel, TimestampAbstractModel):
     image: Mapped[str]
     description: Mapped[str] = mapped_column(String(1024))
     about_author: Mapped[str] = mapped_column(String(1024))
-    genre: Mapped[GenreTypeEnum] = mapped_column(
-        Enum(*[genre.value for genre in GenreTypeEnum], name="genre_type_enum"),
-        nullable=False,
-    )
+    genre: Mapped[List[str]] = mapped_column(pg.ARRAY(String), nullable=False)
     age: Mapped[int] = mapped_column(default=0, nullable=False)
     annotation: Mapped[str] = mapped_column(String(1024))
     recommendations: Mapped[dict] = mapped_column(type_=JSON)

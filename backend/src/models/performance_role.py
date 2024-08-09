@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models import BaseModel
@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 
 class PerformanceRole(BaseModel):
+    __table_args__ = (UniqueConstraint("title", "performance_id", name="uq_title_performance_id"),)
     __tablename__ = "performance_roles"
 
     title: Mapped[str] = mapped_column(nullable=False)
