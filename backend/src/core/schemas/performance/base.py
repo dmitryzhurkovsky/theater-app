@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, List
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -15,7 +15,7 @@ class PerformanceBase(BaseModel):
     image: str | None = None
     description: str | None = None
     about_author: str | None = None
-    genre: List[GenreTypeEnum]
+    genre: list[GenreTypeEnum]
     age: int = Field(default=0, ge=0)
     annotation: str | None = None
     recommendations: dict[str, Any] | None = None
@@ -25,7 +25,7 @@ class PerformanceRead(PerformanceBase):
     id: UUID
     created_at: datetime
     updated_at: datetime
-    performance_roles: List[PerformanceRoleRead] = []
+    performance_roles: list[PerformanceRoleRead] = []
 
 
 class PerformanceCreate(PerformanceBase):
@@ -35,6 +35,6 @@ class PerformanceCreate(PerformanceBase):
 class PerformanceUpdate(PerformanceBase):
     title: str | None = None
     director_id: UUID | None = None
-    genre: List[GenreTypeEnum] | None = None
+    genre: list[GenreTypeEnum] | None = None
     age: int | None = None
     neeneed_admin_approve: bool | None = None

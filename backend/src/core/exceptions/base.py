@@ -46,5 +46,5 @@ class AccessError(BaseError):
 
 
 class OperationFailedError(BaseError):
-    status_code = status.HTTP_400_BAD_REQUEST
+    status_code = status.HTTP_409_CONFLICT
     detail = "Operation failed"

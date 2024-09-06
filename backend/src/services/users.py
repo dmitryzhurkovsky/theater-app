@@ -22,6 +22,9 @@ class UserService(BaseService):
         self.jwt_token_builder = JWTTokenBuilder()
 
     async def create_user(self, user: UserCreate) -> User:
+        hashed_password = make_password_hash(user.password)
+        user = user.model_copy(update={"password": hashed_password})
+
         return await self.user_manager.create(obj_data=user.model_dump())
 
     async def retrieve_user(self, user_id: UUID) -> User:
@@ -41,9 +44,6 @@ class UserService(BaseService):
 
     async def register_user(self, user: UserRegister) -> User | dict[str, str]:
         await self.check_if_user_exists(user.email)
-
-        hashed_password = make_password_hash(user.password)
-        user = user.model_copy(update={"password": hashed_password})
         return await self.create_user(user=user)
 
     async def authenticate_user(self, email: str, password: str) -> User | bool:

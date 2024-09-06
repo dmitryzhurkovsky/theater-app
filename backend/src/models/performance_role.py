@@ -15,5 +15,7 @@ class PerformanceRole(BaseModel):
     __tablename__ = "performance_roles"
 
     title: Mapped[str] = mapped_column(nullable=False)
-    performance_id: Mapped[UUID] = mapped_column(ForeignKey("performances.id"), nullable=False)
+    performance_id: Mapped[UUID] = mapped_column(
+        ForeignKey("performances.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     performance: Mapped["Performance"] = relationship(back_populates="performance_roles")

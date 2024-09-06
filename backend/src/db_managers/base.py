@@ -24,13 +24,16 @@ class BaseDatabaseManager:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def _handle_integrity_error(self, e: IntegrityError, session: AsyncSession) -> None:
+    async def _handle_integrity_error(self, e: IntegrityError, session: AsyncSession, exc_msg: str = "") -> None:
         # Handle foreign key constraint errors, etc...
         await session.rollback()
-        if e and "UniqueViolationError" in e.orig.args[0]:
-            LOG.warning(f"IntegrityError for model -> {self.model.__name__}", exc_info=e)
+        LOG.error(f"{exc_msg} {e.orig}")
+
+        exc_detail = e.orig.args[0]
+        if "UniqueViolationError" in exc_detail or "ForeignKeyViolationError" in exc_detail:
+            raise OperationFailedError(detail=exc_detail.split("DETAIL:  ")[1])
         else:
-            raise
+            raise OperationFailedError(detail=exc_msg)
 
     @property
     def base_query(self):
@@ -72,8 +75,9 @@ class BaseDatabaseManager:
             await session.commit()
             await session.refresh(obj)
         except IntegrityError as ex:
-            LOG.error(f"Failed to create instance of class {self.model.__name__}. {ex.orig}")
-            raise OperationFailedError(detail=f"Failed to create instance of class {self.model.__name__}.")
+            await self._handle_integrity_error(
+                ex, session, f"Failed to create instance of class {self.model.__name__}."
+            )
 
         return obj
 
@@ -89,8 +93,7 @@ class BaseDatabaseManager:
             await session.commit()
             await session.refresh(instance)
         except IntegrityError as ex:
-            LOG.error(f"Failed to update instance of class {self.model.__name__}. {ex.orig}")
-            raise OperationFailedError(detail=f"Failed to update instance of class {self.model.__name__}.")
+            await self._handle_integrity_error(ex, session, f"Failed to update instance of class {self.model.__name__}")
 
         return instance
 

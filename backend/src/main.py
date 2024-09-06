@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from src.core.config.settings import settings
+from src.core.database.db import postgres_async_engine
 from src.core.exceptions import exception_handlers
 from src.core.logger import Logger
 from src.core.middlewares import add_middlewares
@@ -38,3 +39,8 @@ async def startup_event():
     uvicorn_error_logger.disabled = True
 
     Logger(json_logs=settings.LOG_SETTINGS.LOG_JSON_FORMAT, log_level=settings.LOG_SETTINGS.LOG_LEVEL).setup_logging()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await postgres_async_engine.dispose()

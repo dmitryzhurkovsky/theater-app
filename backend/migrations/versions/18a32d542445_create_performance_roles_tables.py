@@ -8,7 +8,6 @@ Create Date: 2024-04-28 09:37:30.341083
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import func
-from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = "18a32d542445"
@@ -27,8 +26,12 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["performance_id"],
             ["performances.id"],
+            ondelete="CASCADE",
         ),
+        sa.UniqueConstraint("title", "performance_id", name="uq_title_performance_id"),
     )
+    op.create_index("idx_performance_roles_performance_id", "performance_roles", ["performance_id"])
+
     op.create_table(
         "user_performance_role_relationship",
         sa.Column("id", sa.Uuid(), server_default=func.gen_random_uuid()),
@@ -38,15 +41,21 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["performance_role_id"],
             ["performance_roles.id"],
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["users.id"],
+            ondelete="CASCADE",
         ),
-        sa.UniqueConstraint("user_id", "performance_role_id", name="idx_user_theatrical_role"),
+        sa.UniqueConstraint("user_id", "performance_role_id", name="uq_user_theatrical_role"),
     )
+    op.create_index("idx_user_performance_role_relationship_user_id", "user_performance_role_relationship", ["user_id"])
 
 
 def downgrade() -> None:
+    op.drop_index("idx_performance_roles_performance_id", table_name="performance_roles")
+    op.drop_index("idx_user_performance_role_relationship_user_id", table_name="user_performance_role_relationship")
+
     op.drop_table("user_performance_role_relationship")
     op.drop_table("performance_roles")

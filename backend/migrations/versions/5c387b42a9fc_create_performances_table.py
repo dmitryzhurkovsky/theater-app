@@ -10,6 +10,9 @@ from alembic import op
 from sqlalchemy import func
 from sqlalchemy.dialects import postgresql as pg
 
+from src.core.database.utils import drop_enum, get_enum
+from src.core.enums import GenreTypeEnum
+
 # revision identifiers, used by Alembic.
 revision = "5c387b42a9fc"
 down_revision = "6616b8872c4a"
@@ -26,7 +29,7 @@ def upgrade() -> None:
         sa.Column("image", sa.String()),
         sa.Column("description", sa.String(length=1024)),
         sa.Column("about_author", sa.String(length=1024)),
-        sa.Column("genre", pg.ARRAY(sa.String()), nullable=False),
+        sa.Column("genre", pg.ARRAY(get_enum("genre_type_enum", GenreTypeEnum)), nullable=False),
         sa.Column("age", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("annotation", sa.String(length=1024)),
         sa.Column("recommendations", sa.JSON()),
@@ -44,9 +47,14 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["director_id"],
             ["users.id"],
+            ondelete="SET NULL",
         ),
     )
+    op.create_index("idx_performances_director_id", "performances", ["director_id"])
 
 
 def downgrade() -> None:
+    op.drop_index("idx_performances_director_id", table_name="performances")
     op.drop_table("performances")
+
+    drop_enum("genre_type_enum")
