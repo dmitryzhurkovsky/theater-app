@@ -1,5 +1,6 @@
 from collections.abc import AsyncGenerator
 from pathlib import Path
+from uuid import UUID
 
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -9,7 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config.settings import settings
 from src.core.database.db import postgres_async_session
-from src.core.schemas import ControllerConfig
+from src.core.enums import UserRoleTypeEnum
+from src.core.exceptions import AccessError
+from src.core.schemas import ControllerConfig, UserCreate, UserUpdate
 from src.models import User
 from src.services import (
     BaseService,
@@ -72,3 +75,64 @@ def get_google_oauth_flow(request: Request) -> Flow:
         scopes=google_client_scopes,
         redirect_uri=request.url_for("auth"),
     )
+
+
+def required_roles(required_roles: list[UserRoleTypeEnum] = []):
+    def role_checker(user: User = Depends(get_auth_user)):
+        if required_roles and not user.has_a_role(required_roles):
+            raise AccessError from None
+
+    return role_checker
+
+
+def can_create_user(user: UserCreate, current_user: User = Depends(get_auth_user)) -> None:
+    if UserRoleTypeEnum.SUPER_ADMIN in user.user_roles:
+        raise AccessError from None
+
+    if UserRoleTypeEnum.ADMIN in user.user_roles and not current_user.has_role(UserRoleTypeEnum.SUPER_ADMIN):
+        raise AccessError from None
+
+    if UserRoleTypeEnum.DIRECTOR in user.user_roles or UserRoleTypeEnum.ACTOR in user.user_roles:
+        if not current_user.has_a_role([UserRoleTypeEnum.ADMIN, UserRoleTypeEnum.SUPER_ADMIN]):
+            raise AccessError from None
+
+
+async def can_edit_user(
+    user_id: UUID,
+    user: UserUpdate,
+    current_user: User = Depends(get_auth_user),
+    user_service: UserService = Depends(get_user_service),
+):
+    target_user: User = await user_service.retrieve_user(user_id=user_id)
+
+    if target_user.has_role(UserRoleTypeEnum.SUPER_ADMIN) and user_id != current_user.id:
+        raise AccessError
+
+    if user.user_roles and not current_user.has_role(UserRoleTypeEnum.SUPER_ADMIN):
+        raise AccessError
+
+    if target_user.has_a_role([UserRoleTypeEnum.ACTOR, UserRoleTypeEnum.DIRECTOR, UserRoleTypeEnum.ADMIN]):
+        if not current_user.has_role(UserRoleTypeEnum.SUPER_ADMIN) and user_id != current_user.id:
+            raise AccessError
+
+    if target_user.has_role(UserRoleTypeEnum.VIEWER) and user_id != current_user.id:
+        raise AccessError
+
+
+async def can_delete_user(
+    user_id: UUID, current_user: User = Depends(get_auth_user), user_service: UserService = Depends(get_user_service)
+):
+    target_user: User = await user_service.retrieve_user(user_id=user_id)
+
+    if target_user.has_role(UserRoleTypeEnum.SUPER_ADMIN):
+        raise AccessError from None
+
+    if target_user.has_role(UserRoleTypeEnum.ADMIN) and not current_user.has_role(UserRoleTypeEnum.SUPER_ADMIN):
+        raise AccessError from None
+
+    if target_user.has_a_role([UserRoleTypeEnum.ACTOR, UserRoleTypeEnum.DIRECTOR]):
+        if not current_user.has_role(UserRoleTypeEnum.SUPER_ADMIN) and user_id != current_user.id:
+            raise AccessError
+
+    if target_user.has_role(UserRoleTypeEnum.VIEWER) and user_id != current_user.id:
+        raise AccessError

@@ -29,3 +29,13 @@ class User(BaseModel, TimestampAbstractModel):
     telegram_link: Mapped[str] = mapped_column(unique=True)
     instagram_link: Mapped[str] = mapped_column(unique=True)
     free_dates: Mapped[list[date]] = mapped_column(pg.ARRAY(Date))
+
+    def has_role(self, role: UserRoleTypeEnum) -> bool:
+        return role in self.user_roles
+
+    def has_a_role(self, roles: list[UserRoleTypeEnum]) -> bool:
+        for role in roles:
+            if role in self.user_roles:
+                return True
+
+        return False
