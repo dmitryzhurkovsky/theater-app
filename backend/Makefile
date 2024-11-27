@@ -109,8 +109,8 @@ down_test: ## Stop test services of docker-compose.test.yml
 
 
 generate-private-rsa: ## Generate RSA private key
-	openssl genrsa -out $(CORE_DIR)/signatures/private.pem 2048
+	openssl genrsa -out $(CORE_DIR)/security/private.pem 2048
 
 generate-public-rsa: ## Generate RSA public key
-	openssl rsa -in $(CORE_DIR)/signatures/private.pem -outform PEM \
-  		-pubout -out $(CORE_DIR)/signatures/public.pem
+	openssl rsa -in $(CORE_DIR)/security/private.pem -outform PEM \
+  		-pubout -out $(CORE_DIR)/security/public.pem

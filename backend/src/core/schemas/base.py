@@ -1,13 +1,11 @@
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class BaseResponseSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     data: Any
-
-    class Config:
-        from_attributes = True
 
 
 class MessageResponseSchema(BaseModel):

@@ -8,7 +8,6 @@ Create Date: 2024-04-28 13:20:59.228153
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import func
-from sqlalchemy.dialects import postgresql
 
 from src.core.database.utils import drop_enum, get_enum
 from src.core.enums import NotificationTypeEnum
@@ -33,10 +32,12 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["event_id"],
             ["events.id"],
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["users.id"],
+            ondelete="CASCADE",
         ),
     )
 

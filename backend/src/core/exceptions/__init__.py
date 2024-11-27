@@ -1,6 +1,11 @@
 from fastapi.exceptions import HTTPException, RequestValidationError
 
-from src.core.exceptions.base import AccessError, ApplicationException, NotFoundError
+from src.core.exceptions.base import (
+    AccessError,
+    ApplicationException,
+    NotFoundError,
+    OperationFailedError,
+)
 from src.core.exceptions.http_exception import custom_http_exception_handler
 from src.core.exceptions.query_builder_exception import (
     PaginationBuilderException,
@@ -20,4 +25,5 @@ __all__ = (
     "NotFoundError",
     "PaginationBuilderException",
     "QueryBuilderException",
+    "OperationFailedError",
 )

@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import DateTime, Enum, ForeignKey
@@ -7,9 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.enums import EventTypeEnum, StatusTypeEnum
 from src.models import BaseModel, TimestampAbstractModel
-
-if TYPE_CHECKING:
-    from src.models.performance import Performance
 
 
 class Event(BaseModel, TimestampAbstractModel):
@@ -25,5 +21,7 @@ class Event(BaseModel, TimestampAbstractModel):
         Enum(*[status.value for status in StatusTypeEnum], name="status_type_enum"),
         nullable=False,
     )
-    performance_id: Mapped[UUID] = mapped_column(ForeignKey("performances.id"), nullable=False)
+    performance_id: Mapped[UUID] = mapped_column(
+        ForeignKey("performances.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     duration: Mapped[int] = mapped_column(nullable=False, default=60)

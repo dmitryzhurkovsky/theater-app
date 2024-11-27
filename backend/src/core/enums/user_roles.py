@@ -2,7 +2,8 @@ from src.core.enums.base import BaseEnum
 
 
 class UserRoleTypeEnum(BaseEnum):
+    VIEWER = "Viewer"
     ADMIN = "Admin"
     ACTOR = "Actor"
     DIRECTOR = "Director"
-    VIEWER = "Viewer"
+    SUPER_ADMIN = "Super Admin"

@@ -42,8 +42,11 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["performance_id"],
             ["performances.id"],
+            ondelete="CASCADE",
         ),
     )
+    op.create_index("idx_events_performance_id", "events", ["performance_id"])
+
     op.create_table(
         "event_confirmations",
         sa.Column("id", sa.Uuid(), server_default=func.gen_random_uuid()),
@@ -54,16 +57,20 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["event_id"],
             ["events.id"],
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["users.id"],
+            ondelete="CASCADE",
         ),
         sa.UniqueConstraint("user_id", "event_id", name="idx_user_event"),
     )
 
 
 def downgrade() -> None:
+    op.drop_index("idx_events_performance_id", table_name="events")
+
     op.drop_table("event_confirmations")
     op.drop_table("events")
 
