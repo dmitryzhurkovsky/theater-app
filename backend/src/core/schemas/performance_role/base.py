@@ -4,12 +4,12 @@ from pydantic import BaseModel, ConfigDict
 
 
 class PerformanceRoleCreate(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
     title: str
     performance_id: UUID
 
 
 class PerformanceRoleRead(PerformanceRoleCreate):
+    model_config = ConfigDict(from_attributes=True)
     id: UUID
 
 

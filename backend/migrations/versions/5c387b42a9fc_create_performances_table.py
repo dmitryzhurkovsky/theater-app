@@ -5,6 +5,7 @@ Revises: 6616b8872c4a
 Create Date: 2024-04-27 17:01:33.476873
 
 """
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import func
@@ -25,7 +26,7 @@ def upgrade() -> None:
         "performances",
         sa.Column("id", sa.Uuid(), server_default=func.gen_random_uuid()),
         sa.Column("title", sa.String(length=256), nullable=False),
-        sa.Column("director_id", sa.Uuid(), nullable=False),
+        sa.Column("director_id", sa.Uuid()),
         sa.Column("image", sa.String()),
         sa.Column("description", sa.String(length=1024)),
         sa.Column("about_author", sa.String(length=1024)),

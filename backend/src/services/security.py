@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 
 from src.core.enums.jwt_token import TokenTypeEnum
 from src.core.exceptions.auth_exceptions import InvalidJWTException
+from src.core.exceptions.base import NotFoundError
 from src.db_managers import UserManager
 from src.models import User
 from src.services.base import BaseService
@@ -87,7 +88,7 @@ class SecurityService(BaseService):
         """
         try:
             return await self.user_manager.get_by(filters={"email": sub})
-        except IntegrityError as ex:
+        except NotFoundError as ex:
             LOG.error(f"Failed to retrieve user from token. {ex}")
             raise InvalidJWTException(detail="Invalid token. User not found")
 

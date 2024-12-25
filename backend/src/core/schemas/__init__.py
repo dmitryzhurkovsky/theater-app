@@ -9,6 +9,7 @@ from src.core.schemas.common import (
     SortField,
 )
 from src.core.schemas.performance import (
+    PerformanceBase,
     PerformanceCreate,
     PerformanceRead,
     PerformanceUpdate,
@@ -51,6 +52,7 @@ __all__ = (
     "UserRead",
     "UserUpdate",
     "UserRegister",
+    "PerformanceBase",
     "PerformanceCreate",
     "PerformanceRead",
     "PerformanceUpdate",

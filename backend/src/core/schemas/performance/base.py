@@ -9,20 +9,21 @@ from src.core.schemas.performance_role import PerformanceRoleRead
 
 
 class PerformanceBase(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
     title: str
     director_id: UUID
     image: str | None = None
-    description: str | None = None
-    about_author: str | None = None
+    description: str | None = Field(max_length=1024, default=None)
+    about_author: str | None = Field(max_length=1024, default=None)
     genre: list[GenreTypeEnum]
     age: int = Field(default=0, ge=0)
-    annotation: str | None = None
+    annotation: str | None = Field(max_length=1024, default=None)
     recommendations: dict[str, Any] | None = None
 
 
 class PerformanceRead(PerformanceBase):
+    model_config = ConfigDict(from_attributes=True)
     id: UUID
+    director_id: UUID | None
     created_at: datetime
     updated_at: datetime
     performance_roles: list[PerformanceRoleRead] = []
@@ -37,4 +38,4 @@ class PerformanceUpdate(PerformanceBase):
     director_id: UUID | None = None
     genre: list[GenreTypeEnum] | None = None
     age: int | None = None
-    neeneed_admin_approve: bool | None = None
+    need_admin_approve: bool | None = None

@@ -16,16 +16,16 @@ class Performance(BaseModel, TimestampAbstractModel):
     __tablename__ = "performances"
 
     title: Mapped[str] = mapped_column(String(256), nullable=False, unique=True)
-    director_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=False, index=True)
-    image: Mapped[str]
-    description: Mapped[str] = mapped_column(String(1024))
-    about_author: Mapped[str] = mapped_column(String(1024))
+    director_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    image: Mapped[str] = mapped_column(nullable=True)
+    description: Mapped[str] = mapped_column(String(1024), nullable=True)
+    about_author: Mapped[str] = mapped_column(String(1024), nullable=True)
     genre: Mapped[list[GenreTypeEnum]] = mapped_column(
         pg.ARRAY(Enum(*[genre.value for genre in GenreTypeEnum], name="genre_type_enum")),
         nullable=False,
     )
     age: Mapped[int] = mapped_column(default=0, nullable=False)
-    annotation: Mapped[str] = mapped_column(String(1024))
-    recommendations: Mapped[dict] = mapped_column(type_=JSON)
-    need_admin_approve: Mapped[bool] = mapped_column(default=False)
+    annotation: Mapped[str] = mapped_column(String(1024), nullable=True)
+    recommendations: Mapped[dict] = mapped_column(type_=JSON, nullable=True)
+    need_admin_approve: Mapped[bool] = mapped_column(default=False, nullable=False)
     performance_roles: Mapped[list["PerformanceRole"]] = relationship(back_populates="performance", lazy="selectin")

@@ -17,4 +17,4 @@ class Notification(BaseModel):
         Enum(*[notification_type.value for notification_type in NotificationTypeEnum], name="notification_type_enum"),
         nullable=False,
     )
-    text: Mapped[str] = mapped_column(String(1024))
+    text: Mapped[str] = mapped_column(String(1024), nullable=True)
