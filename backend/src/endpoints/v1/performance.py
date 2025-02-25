@@ -2,17 +2,26 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
-from src.core.deps import PerformanceServiceDep
+from src.core.deps import PerformanceServiceDep, PerformanceServiceWithConfigDep
 from src.core.enums import UserRoleTypeEnum
 from src.core.permissions import required_roles
 from src.core.schemas import (
     MessageResponseSchema,
+    PaginationResponseSchema,
     PerformanceCreate,
+    PerformanceQueryParameters,
     PerformanceRead,
     PerformanceUpdate,
 )
 
 router = APIRouter(prefix="/performances", tags=["Performances"])
+
+
+@router.get("/list", response_model=PaginationResponseSchema, dependencies=[Depends(required_roles())])
+async def get_performances(
+    service: PerformanceServiceWithConfigDep, query_parameters: PerformanceQueryParameters = Depends()
+):
+    return await service.get_performances(query_parameters)
 
 
 @router.post(

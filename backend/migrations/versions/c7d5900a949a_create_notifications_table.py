@@ -5,6 +5,7 @@ Revises: c24e31c8b4e1
 Create Date: 2024-04-28 13:20:59.228153
 
 """
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import func
@@ -24,7 +25,7 @@ def upgrade() -> None:
         "notifications",
         sa.Column("id", sa.Uuid(), server_default=func.gen_random_uuid()),
         sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.Column("event_id", sa.Uuid(), nullable=False),
+        sa.Column("event_id", sa.Uuid(), nullable=True),
         sa.Column("is_read", sa.Boolean(), nullable=False, server_default=sa.false()),
         sa.Column("type", get_enum("notification_type_enum", NotificationTypeEnum), nullable=False),
         sa.Column("text", sa.String(length=1024)),

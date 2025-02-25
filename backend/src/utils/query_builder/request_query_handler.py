@@ -1,7 +1,10 @@
-from sqlalchemy import Select, func
+from typing import Type
+
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.schemas import (
+    GenericBaseModel,
     PaginationMetaSchema,
     PaginationResponseSchema,
     QueryParameters,
@@ -63,7 +66,9 @@ class RequestQueryHandler:
 
         return stmt
 
-    async def get_paginated_response(self, stmt: Select, query_params: QueryParameters) -> PaginationResponseSchema:
+    async def get_paginated_response(
+        self, stmt: Select, query_params: QueryParameters, schema: Type[GenericBaseModel]
+    ) -> PaginationResponseSchema:
         stmt = self.apply_sort(stmt, query_params)
 
         metadata = await self.get_pagination_metadata(
@@ -75,15 +80,15 @@ class RequestQueryHandler:
         result = await self.session.execute(stmt)
 
         return PaginationResponseSchema(
-            data=result.scalars().all(),
-            meta=metadata,
+            data=[schema.model_validate(instance).model_dump() for instance in result.scalars().all()],
+            meta=metadata.model_dump(),
         )
 
     async def get_pagination_metadata(self, stmt: Select, paginator: PaginatorConfig) -> PaginationMetaSchema:
         """
         Get pagination related metadata.
         """
-        stmt = stmt.with_only_columns(func.count()).order_by(None)
+        stmt = select(func.count()).select_from(stmt)
         result = await self.session.execute(stmt)
 
         total_items = result.scalar_one()
@@ -95,7 +100,6 @@ class RequestQueryHandler:
         return PaginationMetaSchema(
             **{
                 "per_page": paginator.per_page,
-                "page": paginator.page,
                 "total": total_items,
                 "pages": total_pages,
                 "page_number": paginator.page,

@@ -5,7 +5,7 @@ from sqlalchemy import JSON, Enum, ForeignKey, String
 from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.core.enums import GenreTypeEnum
+from src.core.enums import CategoryTypeEnum, GenreTypeEnum
 from src.models import BaseModel, TimestampAbstractModel
 
 if TYPE_CHECKING:
@@ -23,6 +23,9 @@ class Performance(BaseModel, TimestampAbstractModel):
     genre: Mapped[list[GenreTypeEnum]] = mapped_column(
         pg.ARRAY(Enum(*[genre.value for genre in GenreTypeEnum], name="genre_type_enum")),
         nullable=False,
+    )
+    category: Mapped[CategoryTypeEnum] = mapped_column(
+        Enum(*[category_type.value for category_type in CategoryTypeEnum], name="category_type_enum"), nullable=False
     )
     age: Mapped[int] = mapped_column(default=0, nullable=False)
     annotation: Mapped[str] = mapped_column(String(1024), nullable=True)

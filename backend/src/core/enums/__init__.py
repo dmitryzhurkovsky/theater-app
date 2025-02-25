@@ -1,4 +1,5 @@
 from src.core.enums.base import BaseEnum
+from src.core.enums.category import CategoryTypeEnum
 from src.core.enums.environment import EnvironmentEnum
 from src.core.enums.event_types import EventTypeEnum
 from src.core.enums.gender import GenderTypeEnum
@@ -11,6 +12,7 @@ from src.core.enums.user_roles import UserRoleTypeEnum
 
 __all__ = (
     "BaseEnum",
+    "CategoryTypeEnum",
     "EnvironmentEnum",
     "GenreTypeEnum",
     "GenderTypeEnum",

@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config.settings import settings
 from src.core.database.db import postgres_async_session
+from src.core.schemas import ControllerConfig
 from src.models import User
 from src.services import (
     PerformanceRoleService,
@@ -43,6 +44,10 @@ def get_performance_service(session: AsyncSession = Depends(with_async_session))
     return PerformanceService(session=session)
 
 
+def get_performance_service_with_config(session: AsyncSession = Depends(with_async_session)) -> PerformanceService:
+    return PerformanceService(session=session, config=ControllerConfig())
+
+
 def get_performance_role_service(session: AsyncSession = Depends(with_async_session)) -> PerformanceRoleService:
     return PerformanceRoleService(session=session)
 
@@ -70,5 +75,6 @@ AuthenticatedUser = Annotated[User, Depends(get_auth_user)]
 GoogleOAuthFlow = Annotated[Flow, Depends(get_google_oauth_flow)]
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
 PerformanceServiceDep = Annotated[PerformanceService, Depends(get_performance_service)]
+PerformanceServiceWithConfigDep = Annotated[PerformanceService, Depends(get_performance_service_with_config)]
 PerformanceRoleServiceDep = Annotated[PerformanceRoleService, Depends(get_performance_role_service)]
 SecurityServiceDep = Annotated[SecurityService, Depends(get_security_service)]

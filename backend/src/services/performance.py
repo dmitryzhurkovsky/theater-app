@@ -1,6 +1,12 @@
 from uuid import UUID
 
-from src.core.schemas import PerformanceCreate, PerformanceUpdate
+from src.core.schemas import (
+    PaginationResponseSchema,
+    PerformanceCreate,
+    PerformanceQueryParameters,
+    PerformanceRead,
+    PerformanceUpdate,
+)
 from src.db_managers import PerformanceManager
 from src.models import Performance
 from src.services import BaseService
@@ -10,6 +16,18 @@ class PerformanceService(BaseService):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.performance_manager = PerformanceManager(self.session)
+
+    async def get_performances(self, query_parameters: PerformanceQueryParameters) -> PaginationResponseSchema:
+        stmt = self.performance_manager.get_by(
+            self.performance_manager.base_query, filters=query_parameters.model_dump(exclude_none=True)
+        )
+
+        return await super().get_paginated_response(
+            model=self.performance_manager.model,
+            stmt=stmt,
+            query_parameters=query_parameters,
+            schema=PerformanceRead,
+        )
 
     async def create_performance(self, performance: PerformanceCreate) -> Performance:
         return await self.performance_manager.create(performance.model_dump())

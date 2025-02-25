@@ -12,7 +12,7 @@ from sqlalchemy import func
 from sqlalchemy.dialects import postgresql as pg
 
 from src.core.database.utils import drop_enum, get_enum
-from src.core.enums import GenreTypeEnum
+from src.core.enums import CategoryTypeEnum, GenreTypeEnum
 
 # revision identifiers, used by Alembic.
 revision = "5c387b42a9fc"
@@ -31,6 +31,7 @@ def upgrade() -> None:
         sa.Column("description", sa.String(length=1024)),
         sa.Column("about_author", sa.String(length=1024)),
         sa.Column("genre", pg.ARRAY(get_enum("genre_type_enum", GenreTypeEnum)), nullable=False),
+        sa.Column("category", get_enum("category_type_enum", CategoryTypeEnum), nullable=False),
         sa.Column("age", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("annotation", sa.String(length=1024)),
         sa.Column("recommendations", sa.JSON()),
@@ -59,3 +60,4 @@ def downgrade() -> None:
     op.drop_table("performances")
 
     drop_enum("genre_type_enum")
+    drop_enum("category_type_enum")
