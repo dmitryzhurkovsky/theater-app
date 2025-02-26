@@ -6,6 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database.db import postgres_async_session
 from src.models import BaseModel
+from tests.factories.models import (
+    PerformanceFactory,
+    PerformanceRoleFactory,
+    UserFactory,
+)
 
 
 @pytest_asyncio.fixture(autouse=True)
@@ -17,3 +22,10 @@ async def session(database_setup) -> AsyncGenerator[AsyncSession, None] | AsyncS
         for _, table in BaseModel.metadata.tables.items():
             await session.execute(delete(table))
         await session.commit()
+
+
+@pytest_asyncio.fixture(autouse=True)
+def set_async_session_for_factories(session: AsyncSession):
+    UserFactory.__async_session__ = session
+    PerformanceFactory.__async_session__ = session
+    PerformanceRoleFactory.__async_session__ = session

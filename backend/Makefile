@@ -17,7 +17,7 @@ export PRINT_HELP_PYSCRIPT
 .EXPORT_ALL_VARIABLES:
 COMPOSE_FILE ?= ../docker-compose.yml
 COMPOSE_TEST_FILE ?= docker-compose.test.yml
-ALEMBIC_VERSION ?= 4c9e3982a64b
+ALEMBIC_VERSION ?= c7d5900a949a
 CORE_DIR ?= src/core
 
 help: ## List available commands
