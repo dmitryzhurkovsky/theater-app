@@ -16,6 +16,7 @@ from src.services import (
     PerformanceRoleService,
     PerformanceService,
     SecurityService,
+    UserPerformanceRoleService,
     UserService,
 )
 
@@ -52,6 +53,12 @@ def get_performance_role_service(session: AsyncSession = Depends(with_async_sess
     return PerformanceRoleService(session=session)
 
 
+def get_user_performance_role_service(
+    session: AsyncSession = Depends(with_async_session),
+) -> UserPerformanceRoleService:
+    return UserPerformanceRoleService(session=session)
+
+
 def get_security_service(session: AsyncSession = Depends(with_async_session)) -> SecurityService:
     return SecurityService(session=session)
 
@@ -77,4 +84,5 @@ UserServiceDep = Annotated[UserService, Depends(get_user_service)]
 PerformanceServiceDep = Annotated[PerformanceService, Depends(get_performance_service)]
 PerformanceServiceWithConfigDep = Annotated[PerformanceService, Depends(get_performance_service_with_config)]
 PerformanceRoleServiceDep = Annotated[PerformanceRoleService, Depends(get_performance_role_service)]
+UserPerformanceRoleServiceDep = Annotated[UserPerformanceRoleService, Depends(get_user_performance_role_service)]
 SecurityServiceDep = Annotated[SecurityService, Depends(get_security_service)]

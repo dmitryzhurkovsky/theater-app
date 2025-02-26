@@ -34,6 +34,11 @@ from src.core.schemas.user import (
     UserRegister,
     UserUpdate,
 )
+from src.core.schemas.user_performance_role import (
+    UserPerformanceRoleBase,
+    UserPerformanceRoleRead,
+    UserPerformanceRoleUpdate,
+)
 
 __all__ = (
     "BaseResponseSchema",
@@ -55,6 +60,9 @@ __all__ = (
     "UserRead",
     "UserUpdate",
     "UserRegister",
+    "UserPerformanceRoleBase",
+    "UserPerformanceRoleRead",
+    "UserPerformanceRoleUpdate",
     "PerformanceBase",
     "PerformanceCreate",
     "PerformanceRead",
