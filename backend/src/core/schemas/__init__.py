@@ -9,6 +9,7 @@ from src.core.schemas.common import (
     QueryParameters,
     SortField,
 )
+from src.core.schemas.events import EventBase, EventRead, EventUpdate
 from src.core.schemas.performance import (
     PerformanceBase,
     PerformanceCreate,
@@ -54,6 +55,9 @@ __all__ = (
     "RequestLogHttpSchema",
     "RequestLogSchema",
     "SortField",
+    "EventBase",
+    "EventRead",
+    "EventUpdate",
     "UserBase",
     "UserCreate",
     "UserCreateWithOAuth",

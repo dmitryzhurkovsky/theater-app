@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from src.endpoints.v1 import (
+    events,
     healthcheck,
     performance,
     performance_role,
@@ -19,3 +20,4 @@ router.include_router(google.router)
 router.include_router(performance.router)
 router.include_router(performance_role.router)
 router.include_router(user_performance_role.router)
+router.include_router(events.router)

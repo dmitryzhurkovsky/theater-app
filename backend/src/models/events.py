@@ -20,6 +20,7 @@ class Event(BaseModel, TimestampAbstractModel):
     status: Mapped[StatusTypeEnum] = mapped_column(
         Enum(*[status.value for status in StatusTypeEnum], name="status_type_enum"),
         nullable=False,
+        default=StatusTypeEnum.PENDING,
     )
     performance_id: Mapped[UUID] = mapped_column(
         ForeignKey("performances.id", ondelete="CASCADE"), nullable=True, index=True

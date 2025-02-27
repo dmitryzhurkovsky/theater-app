@@ -13,6 +13,7 @@ from src.core.database.db import postgres_async_session
 from src.core.schemas import ControllerConfig
 from src.models import User
 from src.services import (
+    EventService,
     PerformanceRoleService,
     PerformanceService,
     SecurityService,
@@ -59,6 +60,10 @@ def get_user_performance_role_service(
     return UserPerformanceRoleService(session=session)
 
 
+def get_event_service(session: AsyncSession = Depends(with_async_session)) -> EventService:
+    return EventService(session=session)
+
+
 def get_security_service(session: AsyncSession = Depends(with_async_session)) -> SecurityService:
     return SecurityService(session=session)
 
@@ -85,4 +90,5 @@ PerformanceServiceDep = Annotated[PerformanceService, Depends(get_performance_se
 PerformanceServiceWithConfigDep = Annotated[PerformanceService, Depends(get_performance_service_with_config)]
 PerformanceRoleServiceDep = Annotated[PerformanceRoleService, Depends(get_performance_role_service)]
 UserPerformanceRoleServiceDep = Annotated[UserPerformanceRoleService, Depends(get_user_performance_role_service)]
+EventServiceDep = Annotated[EventService, Depends(get_event_service)]
 SecurityServiceDep = Annotated[SecurityService, Depends(get_security_service)]
