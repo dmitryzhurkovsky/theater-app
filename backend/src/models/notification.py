@@ -4,10 +4,10 @@ from sqlalchemy import Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.enums import NotificationTypeEnum
-from src.models import BaseModel
+from src.models import BaseModel, TimestampAbstractModel
 
 
-class Notification(BaseModel):
+class Notification(BaseModel, TimestampAbstractModel):
     __tablename__ = "notifications"
 
     user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)

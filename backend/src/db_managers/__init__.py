@@ -1,6 +1,7 @@
 from src.db_managers.base import BaseDatabaseManager
 from src.db_managers.event_confirmation import EventConfirmationManager
 from src.db_managers.events import EventManager
+from src.db_managers.notification import NotificationManager
 from src.db_managers.performance import PerformanceManager
 from src.db_managers.performance_roles import PerformanceRoleDatabaseManager
 from src.db_managers.user_performance_role import UserPerformanceRoleManager
@@ -10,6 +11,7 @@ __all__ = (
     "BaseDatabaseManager",
     "EventConfirmationManager",
     "EventManager",
+    "NotificationManager",
     "PerformanceManager",
     "PerformanceRoleDatabaseManager",
     "UserManager",

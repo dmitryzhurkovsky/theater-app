@@ -15,6 +15,7 @@ from src.models import User
 from src.services import (
     EventConfirmationService,
     EventService,
+    NotificationService,
     PerformanceRoleService,
     PerformanceService,
     SecurityService,
@@ -69,6 +70,10 @@ def get_event_confirmation_service(session: AsyncSession = Depends(with_async_se
     return EventConfirmationService(session=session)
 
 
+def get_notification_service(session: AsyncSession = Depends(with_async_session)) -> NotificationService:
+    return NotificationService(session=session)
+
+
 def get_security_service(session: AsyncSession = Depends(with_async_session)) -> SecurityService:
     return SecurityService(session=session)
 
@@ -97,4 +102,5 @@ PerformanceRoleServiceDep = Annotated[PerformanceRoleService, Depends(get_perfor
 UserPerformanceRoleServiceDep = Annotated[UserPerformanceRoleService, Depends(get_user_performance_role_service)]
 EventServiceDep = Annotated[EventService, Depends(get_event_service)]
 EventConfirmationServiceDep = Annotated[EventConfirmationService, Depends(get_event_confirmation_service)]
+NotificationServiceDep = Annotated[NotificationService, Depends(get_notification_service)]
 SecurityServiceDep = Annotated[SecurityService, Depends(get_security_service)]

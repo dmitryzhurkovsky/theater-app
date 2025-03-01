@@ -4,13 +4,13 @@ from uuid import UUID
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base.base import BaseModel
+from src.models import BaseModel, TimestampAbstractModel
 
 if TYPE_CHECKING:
     from backend.src.models.events import Event
 
 
-class EventConfirmation(BaseModel):
+class EventConfirmation(BaseModel, TimestampAbstractModel):
     __tablename__ = "event_confirmations"
     __table_args__ = (UniqueConstraint("user_id", "event_id", name="idx_user_event"),)
 

@@ -15,6 +15,11 @@ from src.core.schemas.event_confirmation import (
     EventConfirmationUpdate,
 )
 from src.core.schemas.events import EventBase, EventRead, EventUpdate
+from src.core.schemas.notification import (
+    NotificationBase,
+    NotificationRead,
+    NotificationUpdate,
+)
 from src.core.schemas.performance import (
     PerformanceBase,
     PerformanceCreate,
@@ -66,6 +71,9 @@ __all__ = (
     "EventBase",
     "EventRead",
     "EventUpdate",
+    "NotificationBase",
+    "NotificationRead",
+    "NotificationUpdate",
     "UserBase",
     "UserCreate",
     "UserCreateWithOAuth",

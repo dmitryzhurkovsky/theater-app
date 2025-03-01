@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
@@ -13,6 +14,8 @@ class EventConfirmationRead(EventConfirmationBase):
 
     id: UUID
     is_approved: bool
+    created_at: datetime
+    updated_at: datetime
 
 
 class EventConfirmationUpdate(BaseModel):
