@@ -2,10 +2,10 @@ from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import DateTime, Enum, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.enums import EventTypeEnum, StatusTypeEnum
-from src.models import BaseModel, TimestampAbstractModel
+from src.models import BaseModel, EventConfirmation, TimestampAbstractModel
 
 
 class Event(BaseModel, TimestampAbstractModel):
@@ -26,3 +26,4 @@ class Event(BaseModel, TimestampAbstractModel):
         ForeignKey("performances.id", ondelete="CASCADE"), nullable=True, index=True
     )
     duration: Mapped[int] = mapped_column(nullable=False, default=60)
+    confirmations: Mapped[list["EventConfirmation"]] = relationship(back_populates="event", lazy="selectin")

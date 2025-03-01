@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import ForeignKey, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base.base import BaseModel
+
+if TYPE_CHECKING:
+    from backend.src.models.events import Event
 
 
 class EventConfirmation(BaseModel):
@@ -13,3 +17,4 @@ class EventConfirmation(BaseModel):
     user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id", ondelete="CASCADE"), nullable=False)
     is_approved: Mapped[bool] = mapped_column(nullable=False, default=False)
+    event: Mapped["Event"] = relationship(back_populates="confirmations")

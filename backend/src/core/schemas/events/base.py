@@ -4,6 +4,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.core.enums import EventTypeEnum, StatusTypeEnum
+from src.core.schemas.event_confirmation import EventConfirmationRead
 
 
 class EventBase(BaseModel):
@@ -22,6 +23,8 @@ class EventRead(EventBase):
     status: StatusTypeEnum
     created_at: datetime
     updated_at: datetime
+
+    confirmations: list[EventConfirmationRead] = []
 
 
 class EventUpdate(EventBase):

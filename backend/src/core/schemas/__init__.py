@@ -9,6 +9,11 @@ from src.core.schemas.common import (
     QueryParameters,
     SortField,
 )
+from src.core.schemas.event_confirmation import (
+    EventConfirmationBase,
+    EventConfirmationRead,
+    EventConfirmationUpdate,
+)
 from src.core.schemas.events import EventBase, EventRead, EventUpdate
 from src.core.schemas.performance import (
     PerformanceBase,
@@ -55,6 +60,9 @@ __all__ = (
     "RequestLogHttpSchema",
     "RequestLogSchema",
     "SortField",
+    "EventConfirmationBase",
+    "EventConfirmationRead",
+    "EventConfirmationUpdate",
     "EventBase",
     "EventRead",
     "EventUpdate",
