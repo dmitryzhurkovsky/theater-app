@@ -1,3 +1,4 @@
+from typing import Callable
 from uuid import UUID
 
 from src.core.deps import AuthenticatedUser, UserServiceDep
@@ -7,7 +8,7 @@ from src.core.schemas import UserCreate, UserUpdate
 from src.models import User
 
 
-def required_roles(required_roles: list[UserRoleTypeEnum] = []):
+def required_roles(required_roles: list[UserRoleTypeEnum] | None = None) -> Callable[[AuthenticatedUser], None]:
     """
     Checks if user has at least one role presented in the required_roles list to access the resource.
 
@@ -18,7 +19,7 @@ def required_roles(required_roles: list[UserRoleTypeEnum] = []):
         AccessError: if user doesn't have at least one role from the provided list.
     """
 
-    def role_checker(user: AuthenticatedUser):
+    def role_checker(user: AuthenticatedUser) -> None:
         if required_roles and not user.has_at_least_one_role(required_roles):
             raise AccessError from None
 
@@ -55,7 +56,7 @@ async def can_edit_user(
     user: UserUpdate,
     current_user: AuthenticatedUser,
     user_service: UserServiceDep,
-):
+) -> None:
     """
     Checks if user has access to update another user with specific data.
 
@@ -86,7 +87,7 @@ async def can_edit_user(
         raise AccessError
 
 
-async def can_delete_user(user_id: UUID, current_user: AuthenticatedUser, user_service: UserServiceDep):
+async def can_delete_user(user_id: UUID, current_user: AuthenticatedUser, user_service: UserServiceDep) -> None:
     """
     Checks if user has access to delete user.
 

@@ -100,9 +100,7 @@ up_test: ## Start test services of docker-compose.test.yml
 	PYTEST_ARGS=${pytest_args} docker-compose \
 		--file $(COMPOSE_FILE) \
 		--file $(COMPOSE_TEST_FILE) \
-		up \
-		theater_api \
-		--remove-orphans
+		up --remove-orphans theater_api
 
 down_test: ## Stop test services of docker-compose.test.yml
 	docker-compose --file $(COMPOSE_FILE) --file $(COMPOSE_TEST_FILE) down

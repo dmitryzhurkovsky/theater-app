@@ -10,7 +10,6 @@ from tests.factories.schemas import UserRegisterSchemaFactory
 fake = Faker()
 
 
-@pytest.mark.asyncio
 async def test_register(http_client: AsyncClient):
     user_register_data = UserRegisterSchemaFactory.build()
 
@@ -29,7 +28,6 @@ async def test_register(http_client: AsyncClient):
     assert body["user_roles"] == user_register_data.user_roles
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("unique_field", ["email", "phone_number"])
 async def test_register_unique_error(unique_field: str, user: User, http_client: AsyncClient):
     user_register_data = UserRegisterSchemaFactory.build(**{unique_field: getattr(user, unique_field)})
@@ -43,7 +41,6 @@ async def test_register_unique_error(unique_field: str, user: User, http_client:
     assert response.status_code == status.HTTP_409_CONFLICT
 
 
-@pytest.mark.asyncio
 async def test_login_successful(user: User, password: str, http_client: AsyncClient):
     response = await http_client.post(
         url=url_for("login"), data={"username": user.email, "password": password}, headers={}
@@ -55,7 +52,6 @@ async def test_login_successful(user: User, password: str, http_client: AsyncCli
     assert "refresh_token" in body
 
 
-@pytest.mark.asyncio
 async def test_login_incorrect_data(user: User, password: str, http_client: AsyncClient):
     response = await http_client.post(
         url=url_for("login"), data={"username": user.email, "password": password[::-1]}, headers={}
@@ -66,7 +62,6 @@ async def test_login_incorrect_data(user: User, password: str, http_client: Asyn
     assert body["detail"] == "Incorrect email or password"
 
 
-@pytest.mark.asyncio
 async def test_update_tokens_successful(user: User, password: str, http_client: AsyncClient):
     response = await http_client.post(
         url=url_for("login"), data={"username": user.email, "password": password}, headers={}
@@ -82,7 +77,6 @@ async def test_update_tokens_successful(user: User, password: str, http_client: 
     assert "refresh_token" in body
 
 
-@pytest.mark.asyncio
 async def test_update_tokens_invalid_token(http_client: AsyncClient):
     response = await http_client.post(
         url=url_for("update_tokens"), params={"refresh_token": fake.pystr(max_chars=30)}, headers={}
@@ -91,7 +85,6 @@ async def test_update_tokens_invalid_token(http_client: AsyncClient):
     assert response.json()["detail"] == "Could not validate credentials"
 
 
-@pytest.mark.asyncio
 async def test_update_tokens_user_not_found(mocker, http_client: AsyncClient):
     user_email = fake.email()
     mocker.patch("src.services.security.SecurityService.get_token_payload", return_value={"sub": user_email})

@@ -12,6 +12,7 @@ from src.core.schemas.common import (
 from src.core.schemas.performance import (
     PerformanceBase,
     PerformanceCreate,
+    PerformancePaginationResponseSchema,
     PerformanceQueryParameters,
     PerformanceRead,
     PerformanceUpdate,
@@ -57,6 +58,7 @@ __all__ = (
     "UserRegister",
     "PerformanceBase",
     "PerformanceCreate",
+    "PerformancePaginationResponseSchema",
     "PerformanceRead",
     "PerformanceQueryParameters",
     "PerformanceUpdate",

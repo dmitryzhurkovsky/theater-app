@@ -1,8 +1,12 @@
-from typing import TypeVar
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
-GenericBaseModel = TypeVar("GenericBaseModel", bound=BaseModel)
+GenericBaseModelType = TypeVar("GenericBaseModel", bound=BaseModel)
+
+
+class GenericBaseModel(Generic[GenericBaseModelType]):
+    pass
 
 
 class PaginationConfig(BaseModel):

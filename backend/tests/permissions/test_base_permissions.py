@@ -6,7 +6,6 @@ from src.core.permissions import required_roles
 from tests.factories.models import UserFactory
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "user_roles, require_roles",
     [
@@ -25,7 +24,6 @@ async def test_required_roles_successful(user_roles: list[UserRoleTypeEnum], req
     assert role_checker(user=user) is None
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "user_roles, require_roles",
     [

@@ -5,7 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.core.enums import CategoryTypeEnum, GenreTypeEnum
-from src.core.schemas.common import QueryParameters
+from src.core.schemas.common import PaginationResponseSchema, QueryParameters
 from src.core.schemas.performance_role import PerformanceRoleRead
 
 
@@ -46,3 +46,7 @@ class PerformanceUpdate(PerformanceBase):
 
 class PerformanceQueryParameters(QueryParameters):
     category: CategoryTypeEnum | None = None
+
+
+class PerformancePaginationResponseSchema(PaginationResponseSchema):
+    data: list[PerformanceRead]
