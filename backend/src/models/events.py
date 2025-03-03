@@ -22,6 +22,6 @@ class Event(BaseModel, TimestampAbstractModel):
         nullable=False,
     )
     performance_id: Mapped[UUID] = mapped_column(
-        ForeignKey("performances.id", ondelete="CASCADE"), nullable=False, index=True
+        ForeignKey("performances.id", ondelete="CASCADE"), nullable=True, index=True
     )
     duration: Mapped[int] = mapped_column(nullable=False, default=60)

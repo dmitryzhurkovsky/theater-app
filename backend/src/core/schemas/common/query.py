@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from src.core.enums.sort_order import SortOrder
 from src.core.schemas.common.pagination import Pagination
@@ -24,6 +24,8 @@ class SortField(BaseModel):
 
 class QueryParameters(Pagination):
     """Query parameters for sorting and pagination."""
+
+    model_config = ConfigDict(validate_assignment=True)
 
     sort: list[SortField] | None = []
 

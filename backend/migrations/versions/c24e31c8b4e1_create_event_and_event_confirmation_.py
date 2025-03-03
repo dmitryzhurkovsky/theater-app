@@ -5,6 +5,7 @@ Revises: 18a32d542445
 Create Date: 2024-04-28 12:23:53.706981
 
 """
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import func
@@ -28,7 +29,7 @@ def upgrade() -> None:
         sa.Column("place", sa.String(), nullable=False, server_default="scena"),
         sa.Column("event_type", get_enum("event_type_enum", EventTypeEnum), nullable=False),
         sa.Column("status", get_enum("status_type_enum", StatusTypeEnum), nullable=False),
-        sa.Column("performance_id", sa.Uuid(), nullable=False),
+        sa.Column("performance_id", sa.Uuid(), nullable=True),
         sa.Column("duration", sa.Integer(), nullable=False, server_default="60"),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
         sa.Column(

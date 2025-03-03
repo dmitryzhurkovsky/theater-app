@@ -17,7 +17,7 @@ export PRINT_HELP_PYSCRIPT
 .EXPORT_ALL_VARIABLES:
 COMPOSE_FILE ?= ../docker-compose.yml
 COMPOSE_TEST_FILE ?= docker-compose.test.yml
-ALEMBIC_VERSION ?= 4c9e3982a64b
+ALEMBIC_VERSION ?= c7d5900a949a
 CORE_DIR ?= src/core
 
 help: ## List available commands
@@ -100,9 +100,7 @@ up_test: ## Start test services of docker-compose.test.yml
 	PYTEST_ARGS=${pytest_args} docker-compose \
 		--file $(COMPOSE_FILE) \
 		--file $(COMPOSE_TEST_FILE) \
-		up \
-		theater_api \
-		--remove-orphans
+		up --remove-orphans theater_api
 
 down_test: ## Stop test services of docker-compose.test.yml
 	docker-compose --file $(COMPOSE_FILE) --file $(COMPOSE_TEST_FILE) down

@@ -1,7 +1,8 @@
-from sqlalchemy import Select, func
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.schemas import (
+    GenericBaseModel,
     PaginationMetaSchema,
     PaginationResponseSchema,
     QueryParameters,
@@ -63,7 +64,9 @@ class RequestQueryHandler:
 
         return stmt
 
-    async def get_paginated_response(self, stmt: Select, query_params: QueryParameters) -> PaginationResponseSchema:
+    async def get_paginated_response(
+        self, stmt: Select, query_params: QueryParameters, schema: GenericBaseModel = PaginationResponseSchema
+    ) -> PaginationResponseSchema:
         stmt = self.apply_sort(stmt, query_params)
 
         metadata = await self.get_pagination_metadata(
@@ -74,7 +77,7 @@ class RequestQueryHandler:
 
         result = await self.session.execute(stmt)
 
-        return PaginationResponseSchema(
+        return schema(
             data=result.scalars().all(),
             meta=metadata,
         )
@@ -83,7 +86,7 @@ class RequestQueryHandler:
         """
         Get pagination related metadata.
         """
-        stmt = stmt.with_only_columns(func.count()).order_by(None)
+        stmt = select(func.count()).select_from(stmt)
         result = await self.session.execute(stmt)
 
         total_items = result.scalar_one()
@@ -95,7 +98,6 @@ class RequestQueryHandler:
         return PaginationMetaSchema(
             **{
                 "per_page": paginator.per_page,
-                "page": paginator.page,
                 "total": total_items,
                 "pages": total_pages,
                 "page_number": paginator.page,

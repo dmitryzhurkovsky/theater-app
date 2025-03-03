@@ -2,14 +2,14 @@ import structlog
 from fastapi import Request, Response, status
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import HTTPException
-from starlette.responses import JSONResponse
+from fastapi.responses import ORJSONResponse
 
 from src.core.config.settings import settings
 
 LOG = structlog.stdlib.get_logger()
 
 
-async def custom_http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse | Response:
+async def custom_http_exception_handler(request: Request, exc: HTTPException) -> ORJSONResponse | Response:
     if settings.DEBUG:
         LOG.error(
             "Http error occurred, with the following info: ",
@@ -21,5 +21,5 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException) ->
             body = exc.detail
         else:
             body = {"detail": exc.detail}
-        return JSONResponse(body, status_code=exc.status_code)
+        return ORJSONResponse(body, status_code=exc.status_code)
     return await http_exception_handler(request, exc)

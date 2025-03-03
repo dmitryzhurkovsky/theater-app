@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
 
 from src.core.config.settings import settings
 from src.core.database.db import postgres_async_engine
@@ -17,6 +18,7 @@ def make_application() -> FastAPI:
         redoc_url=settings.REDOC_URL,
         debug=settings.DEBUG,
         exception_handlers=exception_handlers,
+        default_response_class=ORJSONResponse,
     )
 
     add_middlewares(_app)

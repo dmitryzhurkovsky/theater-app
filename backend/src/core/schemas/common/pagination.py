@@ -10,8 +10,8 @@ class PaginationMetaSchema(BaseResponseSchema):
     total: int
     pages: int
     page_number: int
-    next_page: str | None
-    prev_page: str | None
+    next_page: int | None
+    prev_page: int | None
 
 
 class PaginationResponseSchema(BaseResponseSchema):
@@ -25,9 +25,9 @@ class Pagination(BaseModel):
     page: int | None = None
     per_page: int | None = None
 
-    @field_validator("page_number", "per_page", mode="before", check_fields=False)
+    @field_validator("page", "per_page", mode="before", check_fields=False)
     def validate_page_number(cls, value):  # noqa
         if value is not None and value < 1:
-            raise ValueError("""The fields "page_number" & "per_page" must be greater than 0.""")
+            raise ValueError("""The fields "page" & "per_page" must be greater than 0.""")
 
         return value
