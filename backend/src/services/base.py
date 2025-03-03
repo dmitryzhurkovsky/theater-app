@@ -1,3 +1,5 @@
+from typing import Type
+
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 

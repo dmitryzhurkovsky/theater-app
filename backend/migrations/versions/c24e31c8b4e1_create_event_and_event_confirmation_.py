@@ -28,7 +28,12 @@ def upgrade() -> None:
         sa.Column("date", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
         sa.Column("place", sa.String(), nullable=False, server_default="scena"),
         sa.Column("event_type", get_enum("event_type_enum", EventTypeEnum), nullable=False),
-        sa.Column("status", get_enum("status_type_enum", StatusTypeEnum), nullable=False),
+        sa.Column(
+            "status",
+            get_enum("status_type_enum", StatusTypeEnum),
+            nullable=False,
+            server_default=StatusTypeEnum.PENDING,
+        ),
         sa.Column("performance_id", sa.Uuid(), nullable=True),
         sa.Column("duration", sa.Integer(), nullable=False, server_default="60"),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
@@ -54,6 +59,14 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Uuid(), nullable=False),
         sa.Column("event_id", sa.Uuid(), nullable=False),
         sa.Column("is_approved", sa.Boolean(), nullable=False, server_default=sa.false()),
+        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=func.now(),
+            server_onupdate=func.now(),
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
             ["event_id"],

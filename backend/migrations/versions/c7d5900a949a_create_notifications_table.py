@@ -29,6 +29,14 @@ def upgrade() -> None:
         sa.Column("is_read", sa.Boolean(), nullable=False, server_default=sa.false()),
         sa.Column("type", get_enum("notification_type_enum", NotificationTypeEnum), nullable=False),
         sa.Column("text", sa.String(length=1024)),
+        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=func.now(),
+            server_onupdate=func.now(),
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
             ["event_id"],

@@ -13,9 +13,13 @@ from src.core.database.db import postgres_async_session
 from src.core.schemas import ControllerConfig
 from src.models import User
 from src.services import (
+    EventConfirmationService,
+    EventService,
+    NotificationService,
     PerformanceRoleService,
     PerformanceService,
     SecurityService,
+    UserPerformanceRoleService,
     UserService,
 )
 
@@ -52,6 +56,24 @@ def get_performance_role_service(session: AsyncSession = Depends(with_async_sess
     return PerformanceRoleService(session=session)
 
 
+def get_user_performance_role_service(
+    session: AsyncSession = Depends(with_async_session),
+) -> UserPerformanceRoleService:
+    return UserPerformanceRoleService(session=session)
+
+
+def get_event_service(session: AsyncSession = Depends(with_async_session)) -> EventService:
+    return EventService(session=session)
+
+
+def get_event_confirmation_service(session: AsyncSession = Depends(with_async_session)) -> EventConfirmationService:
+    return EventConfirmationService(session=session)
+
+
+def get_notification_service(session: AsyncSession = Depends(with_async_session)) -> NotificationService:
+    return NotificationService(session=session)
+
+
 def get_security_service(session: AsyncSession = Depends(with_async_session)) -> SecurityService:
     return SecurityService(session=session)
 
@@ -77,4 +99,8 @@ UserServiceDep = Annotated[UserService, Depends(get_user_service)]
 PerformanceServiceDep = Annotated[PerformanceService, Depends(get_performance_service)]
 PerformanceServiceWithConfigDep = Annotated[PerformanceService, Depends(get_performance_service_with_config)]
 PerformanceRoleServiceDep = Annotated[PerformanceRoleService, Depends(get_performance_role_service)]
+UserPerformanceRoleServiceDep = Annotated[UserPerformanceRoleService, Depends(get_user_performance_role_service)]
+EventServiceDep = Annotated[EventService, Depends(get_event_service)]
+EventConfirmationServiceDep = Annotated[EventConfirmationService, Depends(get_event_confirmation_service)]
+NotificationServiceDep = Annotated[NotificationService, Depends(get_notification_service)]
 SecurityServiceDep = Annotated[SecurityService, Depends(get_security_service)]

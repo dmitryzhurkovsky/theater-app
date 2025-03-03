@@ -9,6 +9,17 @@ from src.core.schemas.common import (
     QueryParameters,
     SortField,
 )
+from src.core.schemas.event_confirmation import (
+    EventConfirmationBase,
+    EventConfirmationRead,
+    EventConfirmationUpdate,
+)
+from src.core.schemas.events import EventBase, EventRead, EventUpdate
+from src.core.schemas.notification import (
+    NotificationBase,
+    NotificationRead,
+    NotificationUpdate,
+)
 from src.core.schemas.performance import (
     PerformanceBase,
     PerformanceCreate,
@@ -35,6 +46,11 @@ from src.core.schemas.user import (
     UserRegister,
     UserUpdate,
 )
+from src.core.schemas.user_performance_role import (
+    UserPerformanceRoleBase,
+    UserPerformanceRoleRead,
+    UserPerformanceRoleUpdate,
+)
 
 __all__ = (
     "BaseResponseSchema",
@@ -50,12 +66,24 @@ __all__ = (
     "RequestLogHttpSchema",
     "RequestLogSchema",
     "SortField",
+    "EventConfirmationBase",
+    "EventConfirmationRead",
+    "EventConfirmationUpdate",
+    "EventBase",
+    "EventRead",
+    "EventUpdate",
+    "NotificationBase",
+    "NotificationRead",
+    "NotificationUpdate",
     "UserBase",
     "UserCreate",
     "UserCreateWithOAuth",
     "UserRead",
     "UserUpdate",
     "UserRegister",
+    "UserPerformanceRoleBase",
+    "UserPerformanceRoleRead",
+    "UserPerformanceRoleUpdate",
     "PerformanceBase",
     "PerformanceCreate",
     "PerformancePaginationResponseSchema",
