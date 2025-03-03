@@ -23,6 +23,7 @@ from src.core.schemas.notification import (
 from src.core.schemas.performance import (
     PerformanceBase,
     PerformanceCreate,
+    PerformancePaginationResponseSchema,
     PerformanceQueryParameters,
     PerformanceRead,
     PerformanceUpdate,
@@ -85,6 +86,7 @@ __all__ = (
     "UserPerformanceRoleUpdate",
     "PerformanceBase",
     "PerformanceCreate",
+    "PerformancePaginationResponseSchema",
     "PerformanceRead",
     "PerformanceQueryParameters",
     "PerformanceUpdate",

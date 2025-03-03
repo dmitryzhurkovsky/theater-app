@@ -24,7 +24,6 @@ async def create_test_users(
     return current_user, target_user
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "user_create_roles, current_user_roles",
     [
@@ -43,7 +42,6 @@ async def test_can_create_user_successful(
     assert can_create_user(user=user_create_data, current_user=current_user) is None
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "user_create_roles, current_user_roles",
     [
@@ -63,7 +61,6 @@ async def test_can_create_user_access_error(
         can_create_user(user=user_create_data, current_user=current_user)
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "user_to_delete_roles, current_user_roles",
     [
@@ -85,7 +82,6 @@ async def test_can_delete_user_successful(
     assert result is None
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "user_to_delete_roles, current_user_roles",
     [
@@ -109,7 +105,6 @@ async def test_can_delete_user_access_error(
         )
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "user_roles", [[UserRoleTypeEnum.DIRECTOR], [UserRoleTypeEnum.ACTOR], [UserRoleTypeEnum.VIEWER]]
 )
@@ -122,7 +117,6 @@ async def test_can_delete_user_itself_successful(user_roles: list[UserRoleTypeEn
     assert result is None
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("user_roles", [[UserRoleTypeEnum.SUPER_ADMIN], [UserRoleTypeEnum.ADMIN]])
 async def test_can_delete_user_itself_access_error(user_roles: list[UserRoleTypeEnum], session: AsyncSession):
     current_user = await UserFactory.create_async(user_roles=user_roles)
@@ -133,7 +127,6 @@ async def test_can_delete_user_itself_access_error(user_roles: list[UserRoleType
         )
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "user_to_update_roles, current_user_roles",
     [
@@ -158,7 +151,6 @@ async def test_can_update_user_successful(
     assert result is None
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "current_user_roles", [[UserRoleTypeEnum.ACTOR], [UserRoleTypeEnum.VIEWER], [UserRoleTypeEnum.SUPER_ADMIN]]
 )
@@ -174,7 +166,6 @@ async def test_can_update_user_itself_successful(current_user_roles: list[UserRo
     assert result is None
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "current_user_roles", [[UserRoleTypeEnum.ACTOR], [UserRoleTypeEnum.VIEWER], [UserRoleTypeEnum.ADMIN]]
 )
@@ -190,7 +181,6 @@ async def test_can_update_user_roles_failed(current_user_roles: list[UserRoleTyp
         )
 
 
-@pytest.mark.asyncio
 async def test_can_update_user_roles(session: AsyncSession):
     current_user, user_to_update = await create_test_users(
         current_user_roles=[UserRoleTypeEnum.SUPER_ADMIN], target_user_roles=[UserRoleTypeEnum.ACTOR]

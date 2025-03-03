@@ -18,7 +18,7 @@ class BaseService:
         self.config = config
 
     async def get_paginated_response(
-        self, model, stmt: Select, query_parameters: QueryParameters, schema: Type[GenericBaseModel]
+        self, model, stmt: Select, query_parameters: QueryParameters, schema: GenericBaseModel
     ) -> PaginationResponseSchema:
         query_enhancer = RequestQueryHandler(
             self.session,

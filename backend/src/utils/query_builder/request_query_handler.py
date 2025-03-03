@@ -1,5 +1,3 @@
-from typing import Type
-
 from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -67,7 +65,7 @@ class RequestQueryHandler:
         return stmt
 
     async def get_paginated_response(
-        self, stmt: Select, query_params: QueryParameters, schema: Type[GenericBaseModel]
+        self, stmt: Select, query_params: QueryParameters, schema: GenericBaseModel = PaginationResponseSchema
     ) -> PaginationResponseSchema:
         stmt = self.apply_sort(stmt, query_params)
 
@@ -79,9 +77,9 @@ class RequestQueryHandler:
 
         result = await self.session.execute(stmt)
 
-        return PaginationResponseSchema(
-            data=[schema.model_validate(instance).model_dump() for instance in result.scalars().all()],
-            meta=metadata.model_dump(),
+        return schema(
+            data=result.scalars().all(),
+            meta=metadata,
         )
 
     async def get_pagination_metadata(self, stmt: Select, paginator: PaginatorConfig) -> PaginationMetaSchema:
