@@ -1,6 +1,11 @@
 from uuid import UUID
 
-from src.core.schemas import EventBase, EventUpdate
+from src.core.schemas import (
+    EventBase,
+    EventPaginationResponseSchema,
+    EventQueryParameters,
+    EventUpdate,
+)
 from src.db_managers import EventManager
 from src.models import Event
 from src.services import BaseService
@@ -10,6 +15,18 @@ class EventService(BaseService):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.event_manager = EventManager(session=self.session)
+
+    async def get_events(self, query_parameters: EventQueryParameters) -> EventPaginationResponseSchema:
+        stmt = self.event_manager.get_by(
+            self.event_manager.base_query, filters=query_parameters.model_dump(exclude_none=True, by_alias=True)
+        )
+
+        return await super().get_paginated_response(
+            model=self.event_manager.model,
+            stmt=stmt,
+            query_parameters=query_parameters,
+            schema=EventPaginationResponseSchema,
+        )
 
     async def create_event(self, event: EventBase) -> Event:
         return await self.event_manager.create(event.model_dump())

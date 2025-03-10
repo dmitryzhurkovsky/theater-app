@@ -9,3 +9,7 @@ class QueryBuilderException(BaseError):
 
 class PaginationBuilderException(BaseError):
     status_code = status.HTTP_400_BAD_REQUEST
+
+
+class QueryParamsBuilderException(BaseError):
+    status_code = status.HTTP_400_BAD_REQUEST

@@ -2,6 +2,7 @@ from src.core.schemas.base import BaseResponseSchema, MessageResponseSchema
 from src.core.schemas.common import (
     ControllerConfig,
     GenericBaseModel,
+    GenericBaseModelType,
     Pagination,
     PaginationConfig,
     PaginationMetaSchema,
@@ -14,7 +15,13 @@ from src.core.schemas.event_confirmation import (
     EventConfirmationRead,
     EventConfirmationUpdate,
 )
-from src.core.schemas.events import EventBase, EventRead, EventUpdate
+from src.core.schemas.events import (
+    EventBase,
+    EventPaginationResponseSchema,
+    EventQueryParameters,
+    EventRead,
+    EventUpdate,
+)
 from src.core.schemas.notification import (
     NotificationBase,
     NotificationRead,
@@ -56,6 +63,7 @@ __all__ = (
     "BaseResponseSchema",
     "ControllerConfig",
     "GenericBaseModel",
+    "GenericBaseModelType",
     "MessageResponseSchema",
     "Pagination",
     "PaginationConfig",
@@ -70,6 +78,8 @@ __all__ = (
     "EventConfirmationRead",
     "EventConfirmationUpdate",
     "EventBase",
+    "EventPaginationResponseSchema",
+    "EventQueryParameters",
     "EventRead",
     "EventUpdate",
     "NotificationBase",

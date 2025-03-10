@@ -2,12 +2,24 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
-from src.core.deps import EventServiceDep
+from src.core.deps import EventServiceDep, EventServiceWithConfigDep
 from src.core.enums import UserRoleTypeEnum
 from src.core.permissions import required_roles
-from src.core.schemas import EventBase, EventRead, EventUpdate, MessageResponseSchema
+from src.core.schemas import (
+    EventBase,
+    EventPaginationResponseSchema,
+    EventQueryParameters,
+    EventRead,
+    EventUpdate,
+    MessageResponseSchema,
+)
 
 router = APIRouter(prefix="/events", tags=["Events"])
+
+
+@router.get("/list", response_model=EventPaginationResponseSchema, dependencies=[Depends(required_roles())])
+async def get_events(event_service: EventServiceWithConfigDep, query_parameters: EventQueryParameters = Depends()):
+    return await event_service.get_events(query_parameters=query_parameters)
 
 
 @router.post(

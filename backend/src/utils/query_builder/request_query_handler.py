@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.schemas import (
     GenericBaseModel,
+    GenericBaseModelType,
     PaginationMetaSchema,
     PaginationResponseSchema,
     QueryParameters,
@@ -65,8 +66,8 @@ class RequestQueryHandler:
         return stmt
 
     async def get_paginated_response(
-        self, stmt: Select, query_params: QueryParameters, schema: GenericBaseModel = PaginationResponseSchema
-    ) -> PaginationResponseSchema:
+        self, stmt: Select, query_params: QueryParameters, schema: GenericBaseModelType = PaginationResponseSchema
+    ) -> GenericBaseModel:
         stmt = self.apply_sort(stmt, query_params)
 
         metadata = await self.get_pagination_metadata(
