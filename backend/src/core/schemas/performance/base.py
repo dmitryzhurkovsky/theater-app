@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from src.core.enums import CategoryTypeEnum, GenreTypeEnum
+from src.core.exceptions import QueryParamsBuilderException
 from src.core.schemas.common import PaginationResponseSchema, QueryParameters
 from src.core.schemas.performance_role import PerformanceRoleRead
 
@@ -46,6 +47,17 @@ class PerformanceUpdate(PerformanceBase):
 
 class PerformanceQueryParameters(QueryParameters):
     category: CategoryTypeEnum | None = None
+
+
+class AvailablePerformanceQueryParameters(BaseModel):
+    day: date
+
+    @field_validator("day", mode="after")
+    def validate_day(cls, value: date) -> date:
+        if value < date.today():
+            raise QueryParamsBuilderException("day field cannot be before today")
+
+        return value
 
 
 class PerformancePaginationResponseSchema(PaginationResponseSchema):

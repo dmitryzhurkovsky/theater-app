@@ -31,8 +31,8 @@ def test_password_no_special_symbol():
         UserRegisterSchemaFactory.build(password="NoSpecial1")
 
 
-def test_previous_free_dates():
-    with pytest.raises(ValueError, match=""" Field "free_dates" cannot contain previous days """):
+def test_previous_unavailable_dates():
+    with pytest.raises(ValueError, match=""" Field "unavailable_dates" cannot contain previous days """):
         UserCreateSchemaFactory.build(
-            free_dates=[date.today() - timedelta(days=i) for i in range(1, random.randint(2, 5))]
+            unavailable_dates=[date.today() - timedelta(days=i) for i in range(1, random.randint(2, 5))]
         )

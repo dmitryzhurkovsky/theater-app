@@ -9,7 +9,7 @@ from src.core.enums import CategoryTypeEnum, GenreTypeEnum
 from src.models import BaseModel, TimestampAbstractModel
 
 if TYPE_CHECKING:
-    from backend.src.models.performance_role import PerformanceRole
+    from src.models.performance_role import PerformanceRole
 
 
 class Performance(BaseModel, TimestampAbstractModel):
