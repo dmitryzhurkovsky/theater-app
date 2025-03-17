@@ -8,7 +8,7 @@ from src.core.schemas import (
 )
 from src.db_managers import EventManager
 from src.models import Event
-from src.services import BaseService
+from src.services import BaseService, EventConfirmationService
 
 
 class EventService(BaseService):
@@ -29,7 +29,15 @@ class EventService(BaseService):
         )
 
     async def create_event(self, event: EventBase) -> Event:
-        return await self.event_manager.create(event.model_dump())
+        event = await self.event_manager.create(event.model_dump())
+
+        if event.performance_id:
+            event_confirmation_service = EventConfirmationService(session=self.session)
+            await event_confirmation_service.notify_performance_participants(
+                event_id=event.id, performance_id=event.performance_id
+            )
+
+        return event
 
     async def retrieve_event(self, event_id: UUID) -> Event:
         return await self.event_manager.get_or_404(event_id)

@@ -2,7 +2,7 @@ from typing import Any, Sequence, TypeVar
 from uuid import UUID
 
 import structlog
-from sqlalchemy import select
+from sqlalchemy import Select, insert, select
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -36,13 +36,13 @@ class BaseDatabaseManager:
             raise OperationFailedError(detail=exc_msg)
 
     @property
-    def base_query(self):
+    def base_query(self) -> Select:
         return select(self.model)
 
-    def get_query_fields(self, query, fields: list[str]):
+    def get_query_fields(self, query, fields: list[str]) -> Select:
         return OnlyFieldsQueryBuilder(self.model, fields).build(query)
 
-    def get_by(self, query, filters: dict[str, Any]):
+    def get_by(self, query, filters: dict[str, Any]) -> Select:
         """Provides query modification based on passed filters argument"""
         return get_by(self.model, query=query, criteria=filters)
 
@@ -119,6 +119,18 @@ class BaseDatabaseManager:
         await session.commit()
 
         return instance
+
+    async def insert_many(self, data: list[dict[str, Any]], session: AsyncSession = None) -> None:
+        stmt = insert(self.model).values(data)
+        session = session or self.session
+
+        try:
+            await session.execute(stmt)
+            await session.commit()
+        except IntegrityError as ex:
+            await self._handle_integrity_error(
+                ex, session, f"Failed to insert instances of class {self.model.__name__}."
+            )
 
     async def _list(
         self,
