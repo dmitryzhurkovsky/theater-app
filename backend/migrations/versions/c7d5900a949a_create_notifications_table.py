@@ -25,10 +25,10 @@ def upgrade() -> None:
         "notifications",
         sa.Column("id", sa.Uuid(), server_default=func.gen_random_uuid()),
         sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.Column("event_id", sa.Uuid(), nullable=True),
         sa.Column("is_read", sa.Boolean(), nullable=False, server_default=sa.false()),
         sa.Column("type", get_enum("notification_type_enum", NotificationTypeEnum), nullable=False),
         sa.Column("text", sa.String(length=1024)),
+        sa.Column("extra_data", sa.JSON()),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
         sa.Column(
             "updated_at",
@@ -38,11 +38,6 @@ def upgrade() -> None:
             server_onupdate=func.now(),
         ),
         sa.PrimaryKeyConstraint("id"),
-        sa.ForeignKeyConstraint(
-            ["event_id"],
-            ["events.id"],
-            ondelete="CASCADE",
-        ),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["users.id"],
