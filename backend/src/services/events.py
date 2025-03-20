@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from src.core.schemas import (
-    EventBase,
+    EventCreate,
     EventPaginationResponseSchema,
     EventQueryParameters,
     EventUpdate,
@@ -28,7 +28,7 @@ class EventService(BaseService):
             schema=EventPaginationResponseSchema,
         )
 
-    async def create_event(self, event: EventBase) -> Event:
+    async def create_event(self, event: EventCreate) -> Event:
         event = await self.event_manager.create(event.model_dump())
 
         if event.performance_id:

@@ -6,7 +6,7 @@ from src.core.deps import EventServiceDep, EventServiceWithConfigDep
 from src.core.enums import UserRoleTypeEnum
 from src.core.permissions import required_roles
 from src.core.schemas import (
-    EventBase,
+    EventCreate,
     EventPaginationResponseSchema,
     EventQueryParameters,
     EventRead,
@@ -30,7 +30,7 @@ async def get_events(event_service: EventServiceWithConfigDep, query_parameters:
         Depends(required_roles([UserRoleTypeEnum.DIRECTOR, UserRoleTypeEnum.ADMIN, UserRoleTypeEnum.SUPER_ADMIN]))
     ],
 )
-async def create_event(event: EventBase, event_service: EventServiceDep):
+async def create_event(event: EventCreate, event_service: EventServiceDep):
     return await event_service.create_event(event)
 
 

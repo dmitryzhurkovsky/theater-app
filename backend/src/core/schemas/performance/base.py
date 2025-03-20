@@ -5,8 +5,8 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from src.core.enums import CategoryTypeEnum, GenreTypeEnum
-from src.core.exceptions import QueryParamsBuilderException
 from src.core.schemas.common import PaginationResponseSchema, QueryParameters
+from src.core.schemas.common_validators import validate_day_is_not_previous
 from src.core.schemas.performance_role import PerformanceRoleRead
 
 
@@ -54,10 +54,9 @@ class AvailablePerformanceQueryParameters(BaseModel):
 
     @field_validator("day", mode="after")
     def validate_day(cls, value: date) -> date:
-        if value < date.today():
-            raise QueryParamsBuilderException("day field cannot be before today")
-
-        return value
+        return validate_day_is_not_previous(
+            day=value, error_msg="day field cannot contain previous date", is_query_param=True
+        )
 
 
 class PerformancePaginationResponseSchema(PaginationResponseSchema):

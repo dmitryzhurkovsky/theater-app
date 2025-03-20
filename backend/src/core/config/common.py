@@ -5,7 +5,7 @@ from urllib.parse import quote_plus
 
 from environs import Env
 from pydantic import PostgresDsn
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from src.core.enums import EnvironmentEnum, LogLevelEum
 
@@ -17,7 +17,11 @@ env = Env()
 env.read_env(os.environ.get("ENV_FILE", None))
 
 
-class DatabaseSettings(BaseSettings):
+class BaseAppSettings(BaseSettings):
+    model_config = SettingsConfigDict(case_sensitive=True)
+
+
+class DatabaseSettings(BaseAppSettings):
     DB_HOST: str = env.str("DB_HOST", "theater_db")
     DB_PORT: str = env.str("DB_PORT", "5432")
     DB_USER: str = env.str("DB_USER", "docker")
@@ -31,29 +35,20 @@ class DatabaseSettings(BaseSettings):
         f"postgresql+{DB_INTERFACE_ENGINE}://{DB_USER}:{quote_plus(DB_PASS)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
 
-    class Config:
-        case_sensitive = True
 
-
-class CommonSetting(BaseSettings):
+class CommonSetting(BaseAppSettings):
     SUPPORTED_LANGUAGES: list[str] = env.json("SUPPORTED_LANGUAGES", '["eng","ru"]')
     SECRET_KEY: str = env.str("SECRET_KEY", "you_secret_key")
 
-    class Config:
-        case_sensitive = True
 
-
-class CORSSettings(BaseSettings):
+class CORSSettings(BaseAppSettings):
     ALLOW_ORIGINS: list[str] = env.json("ALLOW_ORIGINS", CORS_ALLOW_ALL)
     ALLOW_HEADERS: list[str] = env.json("ALLOW_HEADERS", CORS_ALLOW_ALL)
     ALLOW_METHODS: list[str] = env.json("ALLOW_METHODS", CORS_ALLOW_ALL)
     ALLOW_CREDENTIALS: bool = env.bool("ALLOW_CREDENTIALS", "True")
 
-    class Config:
-        case_sensitive = True
 
-
-class LogSettings(BaseSettings):
+class LogSettings(BaseAppSettings):
     LOG_LEVEL: LogLevelEum = env.str("LOG_LEVEL", "INFO")
     LOG_JSON_FORMAT: bool = env.bool("LOG_JSON_FORMAT", "False")
     LOG_REQUEST_QUERY_PARAMS: bool = env.bool("LOG_REQUEST_QUERY_PARAMS", "False")
@@ -63,11 +58,8 @@ class LogSettings(BaseSettings):
     LOG_REQUEST_BODY_NORMALISED: bool = env.bool("LOG_REQUEST_BODY_NORMALISED", "False")
     LOG_REQUEST_USER: bool = env.bool("LOG_REQUEST_USER", "False")
 
-    class Config:
-        case_sensitive = True
 
-
-class AuthSettings(BaseSettings):
+class AuthSettings(BaseAppSettings):
     OAUTHLIB_INSECURE_TRANSPORT: bool = env.bool("OAUTHLIB_INSECURE_TRANSPORT", "False")
 
     # Google settings
@@ -88,11 +80,8 @@ class AuthSettings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: timedelta = timedelta(minutes=15)
     REFRESH_TOKEN_EXPIRE_DAYS: timedelta = timedelta(days=15)
 
-    class Config:
-        case_sensitive = True
 
-
-class Settings(BaseSettings):
+class Settings(BaseAppSettings):
     # Core settings
     VERSION: str = "1.0.0"
     PROJECT_NAME: str = "Theater API"
@@ -119,6 +108,3 @@ class Settings(BaseSettings):
 
     # Auth settings
     AUTH: AuthSettings = AuthSettings()
-
-    class Config:
-        case_sensitive = True

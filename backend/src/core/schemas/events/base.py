@@ -1,11 +1,12 @@
 from datetime import date, datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from src.core.enums import EventTypeEnum, StatusTypeEnum
 from src.core.exceptions import QueryParamsBuilderException
 from src.core.schemas.common import PaginationResponseSchema, QueryParameters
+from src.core.schemas.common_validators import validate_day_is_not_previous
 from src.core.schemas.event_confirmation import EventConfirmationRead
 
 
@@ -29,7 +30,13 @@ class EventRead(EventBase):
     confirmations: list[EventConfirmationRead] = []
 
 
-class EventUpdate(EventBase):
+class EventCreate(EventBase):
+    @field_validator("date", mode="after")
+    def validate_date(cls, value: datetime) -> datetime:
+        return validate_day_is_not_previous(day=value, error_msg="date field cannot contain previous date")
+
+
+class EventUpdate(EventCreate):
     name: str | None = None
     date: datetime | None = None
     place: str | None = None

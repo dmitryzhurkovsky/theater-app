@@ -1,5 +1,6 @@
 from src.core.schemas.events.base import (
     EventBase,
+    EventCreate,
     EventPaginationResponseSchema,
     EventQueryParameters,
     EventRead,
@@ -8,6 +9,7 @@ from src.core.schemas.events.base import (
 
 __all__ = (
     "EventBase",
+    "EventCreate",
     "EventPaginationResponseSchema",
     "EventQueryParameters",
     "EventRead",

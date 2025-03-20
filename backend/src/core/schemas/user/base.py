@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
 from src.core.enums import GenderTypeEnum, UserRoleTypeEnum
+from src.core.schemas.common_validators import validate_day_is_not_previous
 
 
 class UserBase(BaseModel):
@@ -44,8 +45,9 @@ class UserCreate(UserBase):
     def validate_unavailable_dates(cls, value: list[date] | None) -> list[date] | None:
         if value:
             for free_date in value:
-                if free_date < date.today():
-                    raise ValueError(""" Field "unavailable_dates" cannot contain previous days """)
+                validate_day_is_not_previous(
+                    day=free_date, error_msg=""" Field "unavailable_dates" cannot contain previous days """
+                )
 
         return value
 

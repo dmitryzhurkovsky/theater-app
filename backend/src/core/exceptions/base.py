@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import status
 from fastapi.exceptions import HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 def call_exception(cls):
@@ -15,11 +15,9 @@ def call_exception(cls):
 
 
 class ApplicationException(BaseModel):
+    model_config = ConfigDict(use_enum_values=True)
     detail: str
     errors: list[Any] | None = None
-
-    class Config:
-        use_enum_values = True
 
 
 class BaseError(HTTPException):

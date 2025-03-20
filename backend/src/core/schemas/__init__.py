@@ -17,6 +17,7 @@ from src.core.schemas.event_confirmation import (
 )
 from src.core.schemas.events import (
     EventBase,
+    EventCreate,
     EventPaginationResponseSchema,
     EventQueryParameters,
     EventRead,
@@ -79,6 +80,7 @@ __all__ = (
     "EventConfirmationRead",
     "EventConfirmationUpdate",
     "EventBase",
+    "EventCreate",
     "EventPaginationResponseSchema",
     "EventQueryParameters",
     "EventRead",
