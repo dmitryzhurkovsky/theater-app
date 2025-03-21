@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
 from src.core.enums import GenderTypeEnum, UserRoleTypeEnum
+from src.core.schemas.common_validators import validate_day_is_not_previous
 
 
 class UserBase(BaseModel):
@@ -25,7 +26,7 @@ class UserRead(UserBase):
     viber_link: str | None = None
     telegram_link: str | None = None
     instagram_link: str | None = None
-    free_dates: list[date] | None = None
+    unavailable_dates: list[date] | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -38,14 +39,15 @@ class UserCreate(UserBase):
     viber_link: str | None = None
     telegram_link: str | None = None
     instagram_link: str | None = None
-    free_dates: list[date] | None = None
+    unavailable_dates: list[date] | None = None
 
-    @field_validator("free_dates", mode="after")
-    def validate_free_dates(cls, value: list[date] | None) -> list[date] | None:
+    @field_validator("unavailable_dates", mode="after")
+    def validate_unavailable_dates(cls, value: list[date] | None) -> list[date] | None:
         if value:
             for free_date in value:
-                if free_date < date.today():
-                    raise ValueError(""" Field "free_dates" cannot contain previous days """)
+                validate_day_is_not_previous(
+                    day=free_date, error_msg=""" Field "unavailable_dates" cannot contain previous days """
+                )
 
         return value
 

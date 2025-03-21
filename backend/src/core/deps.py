@@ -1,6 +1,6 @@
 from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Callable, TypeVar
 
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -13,6 +13,7 @@ from src.core.database.db import postgres_async_session
 from src.core.schemas import ControllerConfig
 from src.models import User
 from src.services import (
+    BaseService,
     EventConfirmationService,
     EventService,
     NotificationService,
@@ -27,6 +28,8 @@ oauth2_scheme: OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="v1/auth/log
 google_client_secrets: Path = settings.AUTH.GOOGLE_CLIENT_SECRETS_PATH
 google_client_scopes: list[str] = settings.AUTH.GOOGLE_CLIENT_SCOPES
 
+T = TypeVar("T", bound=BaseService)
+
 
 async def with_async_session() -> AsyncGenerator[AsyncSession, None]:
     session: AsyncSession = postgres_async_session()
@@ -40,38 +43,11 @@ async def with_async_session() -> AsyncGenerator[AsyncSession, None]:
         await session.close()
 
 
-def get_user_service(session: AsyncSession = Depends(with_async_session)) -> UserService:
-    return UserService(session=session)
+def get_service(service_cls: type[T], with_config: bool = False) -> Callable[[AsyncSession], T]:
+    def _service(session: AsyncSession = Depends(with_async_session)) -> T:
+        return service_cls(session=session, config=ControllerConfig() if with_config else None)
 
-
-def get_performance_service(session: AsyncSession = Depends(with_async_session)) -> PerformanceService:
-    return PerformanceService(session=session)
-
-
-def get_performance_service_with_config(session: AsyncSession = Depends(with_async_session)) -> PerformanceService:
-    return PerformanceService(session=session, config=ControllerConfig())
-
-
-def get_performance_role_service(session: AsyncSession = Depends(with_async_session)) -> PerformanceRoleService:
-    return PerformanceRoleService(session=session)
-
-
-def get_user_performance_role_service(
-    session: AsyncSession = Depends(with_async_session),
-) -> UserPerformanceRoleService:
-    return UserPerformanceRoleService(session=session)
-
-
-def get_event_service(session: AsyncSession = Depends(with_async_session)) -> EventService:
-    return EventService(session=session)
-
-
-def get_event_confirmation_service(session: AsyncSession = Depends(with_async_session)) -> EventConfirmationService:
-    return EventConfirmationService(session=session)
-
-
-def get_notification_service(session: AsyncSession = Depends(with_async_session)) -> NotificationService:
-    return NotificationService(session=session)
+    return _service
 
 
 def get_security_service(session: AsyncSession = Depends(with_async_session)) -> SecurityService:
@@ -87,20 +63,30 @@ async def get_auth_user(
 
 def get_google_oauth_flow(request: Request) -> Flow:
     return InstalledAppFlow.from_client_secrets_file(
-        client_secrets_file=google_client_secrets,
+        client_secrets_file=str(google_client_secrets),
         scopes=google_client_scopes,
         redirect_uri=request.url_for("auth"),
     )
 
 
+UserServiceDep = Annotated[UserService, Depends(get_service(service_cls=UserService))]
+PerformanceServiceDep = Annotated[PerformanceService, Depends(get_service(service_cls=PerformanceService))]
+PerformanceRoleServiceDep = Annotated[PerformanceRoleService, Depends(get_service(service_cls=PerformanceRoleService))]
+UserPerformanceRoleServiceDep = Annotated[
+    UserPerformanceRoleService, Depends(get_service(service_cls=UserPerformanceRoleService))
+]
+EventServiceDep = Annotated[EventService, Depends(get_service(service_cls=EventService))]
+EventConfirmationServiceDep = Annotated[
+    EventConfirmationService, Depends(get_service(service_cls=EventConfirmationService))
+]
+NotificationServiceDep = Annotated[NotificationService, Depends(get_service(service_cls=NotificationService))]
+
+PerformanceServiceWithConfigDep = Annotated[
+    PerformanceService, Depends(get_service(service_cls=PerformanceService, with_config=True))
+]
+EventServiceWithConfigDep = Annotated[EventService, Depends(get_service(service_cls=EventService, with_config=True))]
+
+
 AuthenticatedUser = Annotated[User, Depends(get_auth_user)]
 GoogleOAuthFlow = Annotated[Flow, Depends(get_google_oauth_flow)]
-UserServiceDep = Annotated[UserService, Depends(get_user_service)]
-PerformanceServiceDep = Annotated[PerformanceService, Depends(get_performance_service)]
-PerformanceServiceWithConfigDep = Annotated[PerformanceService, Depends(get_performance_service_with_config)]
-PerformanceRoleServiceDep = Annotated[PerformanceRoleService, Depends(get_performance_role_service)]
-UserPerformanceRoleServiceDep = Annotated[UserPerformanceRoleService, Depends(get_user_performance_role_service)]
-EventServiceDep = Annotated[EventService, Depends(get_event_service)]
-EventConfirmationServiceDep = Annotated[EventConfirmationService, Depends(get_event_confirmation_service)]
-NotificationServiceDep = Annotated[NotificationService, Depends(get_notification_service)]
 SecurityServiceDep = Annotated[SecurityService, Depends(get_security_service)]

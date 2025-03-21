@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.models import BaseModel, TimestampAbstractModel
 
 if TYPE_CHECKING:
-    from backend.src.models.events import Event
+    from src.models.events import Event
 
 
 class EventConfirmation(BaseModel, TimestampAbstractModel):

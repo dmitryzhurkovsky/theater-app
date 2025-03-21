@@ -6,6 +6,7 @@ from src.core.deps import PerformanceServiceDep, PerformanceServiceWithConfigDep
 from src.core.enums import UserRoleTypeEnum
 from src.core.permissions import required_roles
 from src.core.schemas import (
+    AvailablePerformanceQueryParameters,
     MessageResponseSchema,
     PaginationResponseSchema,
     PerformanceCreate,
@@ -15,6 +16,17 @@ from src.core.schemas import (
 )
 
 router = APIRouter(prefix="/performances", tags=["Performances"])
+
+
+@router.get(
+    "/available",
+    response_model=list[PerformanceRead],
+    dependencies=[Depends(required_roles([UserRoleTypeEnum.SUPER_ADMIN, UserRoleTypeEnum.ADMIN]))],
+)
+async def get_available_performances(
+    service: PerformanceServiceDep, query_parameters: AvailablePerformanceQueryParameters = Depends()
+):
+    return await service.get_available_performances(day=query_parameters.day)
 
 
 @router.get("/list", response_model=PaginationResponseSchema, dependencies=[Depends(required_roles())])

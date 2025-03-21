@@ -1,11 +1,12 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from src.core.enums import CategoryTypeEnum, GenreTypeEnum
 from src.core.schemas.common import PaginationResponseSchema, QueryParameters
+from src.core.schemas.common_validators import validate_day_is_not_previous
 from src.core.schemas.performance_role import PerformanceRoleRead
 
 
@@ -46,6 +47,16 @@ class PerformanceUpdate(PerformanceBase):
 
 class PerformanceQueryParameters(QueryParameters):
     category: CategoryTypeEnum | None = None
+
+
+class AvailablePerformanceQueryParameters(BaseModel):
+    day: date
+
+    @field_validator("day", mode="after")
+    def validate_day(cls, value: date) -> date:
+        return validate_day_is_not_previous(
+            day=value, error_msg="day field cannot contain previous date", is_query_param=True
+        )
 
 
 class PerformancePaginationResponseSchema(PaginationResponseSchema):

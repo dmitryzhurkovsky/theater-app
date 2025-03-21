@@ -32,5 +32,5 @@ class UserCreateSchemaFactory(UserBaseSchemaFactory):
     __model__ = UserCreate
 
     @classmethod
-    def free_dates(cls) -> list[date]:
+    def unavailable_dates(cls) -> list[date]:
         return [date.today() + timedelta(days=i) for i in range(1, random.randint(2, 10))]

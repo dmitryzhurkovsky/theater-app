@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.models import BaseModel
 
 if TYPE_CHECKING:
-    from backend.src.models.performance import Performance
+    from src.models.performance import Performance
 
 
 class PerformanceRole(BaseModel):

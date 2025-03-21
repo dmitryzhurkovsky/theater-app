@@ -1,12 +1,10 @@
-from typing import Type
-
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.schemas import (
     ControllerConfig,
     GenericBaseModel,
-    PaginationResponseSchema,
+    GenericBaseModelType,
     QueryParameters,
 )
 from src.utils.query_builder.request_query_handler import RequestQueryHandler
@@ -18,8 +16,8 @@ class BaseService:
         self.config = config
 
     async def get_paginated_response(
-        self, model, stmt: Select, query_parameters: QueryParameters, schema: GenericBaseModel
-    ) -> PaginationResponseSchema:
+        self, model, stmt: Select, query_parameters: QueryParameters, schema: GenericBaseModelType
+    ) -> GenericBaseModel:
         query_enhancer = RequestQueryHandler(
             self.session,
             model,

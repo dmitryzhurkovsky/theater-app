@@ -10,6 +10,7 @@ from src.core.exceptions.http_exception import custom_http_exception_handler
 from src.core.exceptions.query_builder_exception import (
     PaginationBuilderException,
     QueryBuilderException,
+    QueryParamsBuilderException,
 )
 from src.core.exceptions.validation_exception import custom_validation_exception_handler
 
@@ -25,5 +26,6 @@ __all__ = (
     "NotFoundError",
     "PaginationBuilderException",
     "QueryBuilderException",
+    "QueryParamsBuilderException",
     "OperationFailedError",
 )

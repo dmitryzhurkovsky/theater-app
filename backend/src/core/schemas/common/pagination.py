@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, field_validator
 
+from src.core.exceptions import QueryParamsBuilderException
 from src.core.schemas.base import BaseResponseSchema
 
 
@@ -28,6 +29,6 @@ class Pagination(BaseModel):
     @field_validator("page", "per_page", mode="before", check_fields=False)
     def validate_page_number(cls, value):  # noqa
         if value is not None and value < 1:
-            raise ValueError("""The fields "page" & "per_page" must be greater than 0.""")
+            raise QueryParamsBuilderException("""The fields "page" & "per_page" must be greater than 0.""")
 
         return value

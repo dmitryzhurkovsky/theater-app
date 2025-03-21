@@ -1,4 +1,7 @@
+from datetime import date
 from uuid import UUID
+
+from sqlalchemy import Sequence
 
 from src.core.schemas import (
     PerformanceCreate,
@@ -29,6 +32,9 @@ class PerformanceService(BaseService):
             query_parameters=query_parameters,
             schema=PerformancePaginationResponseSchema,
         )
+
+    async def get_available_performances(self, day: date) -> Sequence[Performance]:
+        return await self.performance_manager.get_available_performances(day=day)
 
     async def create_performance(self, performance: PerformanceCreate) -> Performance:
         return await self.performance_manager.create(performance.model_dump())

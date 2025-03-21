@@ -2,6 +2,7 @@ from src.core.schemas.base import BaseResponseSchema, MessageResponseSchema
 from src.core.schemas.common import (
     ControllerConfig,
     GenericBaseModel,
+    GenericBaseModelType,
     Pagination,
     PaginationConfig,
     PaginationMetaSchema,
@@ -14,13 +15,21 @@ from src.core.schemas.event_confirmation import (
     EventConfirmationRead,
     EventConfirmationUpdate,
 )
-from src.core.schemas.events import EventBase, EventRead, EventUpdate
+from src.core.schemas.events import (
+    EventBase,
+    EventCreate,
+    EventPaginationResponseSchema,
+    EventQueryParameters,
+    EventRead,
+    EventUpdate,
+)
 from src.core.schemas.notification import (
     NotificationBase,
     NotificationRead,
     NotificationUpdate,
 )
 from src.core.schemas.performance import (
+    AvailablePerformanceQueryParameters,
     PerformanceBase,
     PerformanceCreate,
     PerformancePaginationResponseSchema,
@@ -56,6 +65,7 @@ __all__ = (
     "BaseResponseSchema",
     "ControllerConfig",
     "GenericBaseModel",
+    "GenericBaseModelType",
     "MessageResponseSchema",
     "Pagination",
     "PaginationConfig",
@@ -70,6 +80,9 @@ __all__ = (
     "EventConfirmationRead",
     "EventConfirmationUpdate",
     "EventBase",
+    "EventCreate",
+    "EventPaginationResponseSchema",
+    "EventQueryParameters",
     "EventRead",
     "EventUpdate",
     "NotificationBase",
@@ -84,6 +97,7 @@ __all__ = (
     "UserPerformanceRoleBase",
     "UserPerformanceRoleRead",
     "UserPerformanceRoleUpdate",
+    "AvailablePerformanceQueryParameters",
     "PerformanceBase",
     "PerformanceCreate",
     "PerformancePaginationResponseSchema",

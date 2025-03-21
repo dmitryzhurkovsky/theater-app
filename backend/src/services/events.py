@@ -1,9 +1,14 @@
 from uuid import UUID
 
-from src.core.schemas import EventBase, EventUpdate
+from src.core.schemas import (
+    EventCreate,
+    EventPaginationResponseSchema,
+    EventQueryParameters,
+    EventUpdate,
+)
 from src.db_managers import EventManager
 from src.models import Event
-from src.services import BaseService
+from src.services import BaseService, EventConfirmationService
 
 
 class EventService(BaseService):
@@ -11,8 +16,28 @@ class EventService(BaseService):
         super().__init__(*args, **kwargs)
         self.event_manager = EventManager(session=self.session)
 
-    async def create_event(self, event: EventBase) -> Event:
-        return await self.event_manager.create(event.model_dump())
+    async def get_events(self, query_parameters: EventQueryParameters) -> EventPaginationResponseSchema:
+        stmt = self.event_manager.get_by(
+            self.event_manager.base_query, filters=query_parameters.model_dump(exclude_none=True, by_alias=True)
+        )
+
+        return await super().get_paginated_response(
+            model=self.event_manager.model,
+            stmt=stmt,
+            query_parameters=query_parameters,
+            schema=EventPaginationResponseSchema,
+        )
+
+    async def create_event(self, event: EventCreate) -> Event:
+        event = await self.event_manager.create(event.model_dump())
+
+        if event.performance_id:
+            event_confirmation_service = EventConfirmationService(session=self.session)
+            await event_confirmation_service.notify_performance_participants(
+                event_id=event.id, performance_id=event.performance_id
+            )
+
+        return event
 
     async def retrieve_event(self, event_id: UUID) -> Event:
         return await self.event_manager.get_or_404(event_id)

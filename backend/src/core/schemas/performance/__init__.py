@@ -1,4 +1,5 @@
 from .base import (
+    AvailablePerformanceQueryParameters,
     PerformanceBase,
     PerformanceCreate,
     PerformancePaginationResponseSchema,
@@ -8,6 +9,7 @@ from .base import (
 )
 
 __all__ = (
+    "AvailablePerformanceQueryParameters",
     "PerformanceBase",
     "PerformanceCreate",
     "PerformancePaginationResponseSchema",

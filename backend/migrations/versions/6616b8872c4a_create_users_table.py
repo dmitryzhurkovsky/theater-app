@@ -5,6 +5,7 @@ Revises:
 Create Date: 2023-12-16 01:37:17.603183
 
 """
+
 from typing import Sequence, Union
 
 import sqlalchemy as sa
@@ -38,7 +39,7 @@ def upgrade() -> None:
         sa.Column("viber_link", sa.String()),
         sa.Column("telegram_link", sa.String()),
         sa.Column("instagram_link", sa.String()),
-        sa.Column("free_dates", postgresql.ARRAY(sa.Date())),
+        sa.Column("unavailable_dates", postgresql.ARRAY(sa.Date())),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
         sa.Column(
             "updated_at",

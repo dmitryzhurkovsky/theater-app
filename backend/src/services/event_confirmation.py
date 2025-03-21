@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from src.core.schemas import EventConfirmationBase, EventConfirmationUpdate
-from src.db_managers import EventConfirmationManager
+from src.db_managers import EventConfirmationManager, PerformanceManager
 from src.models import EventConfirmation
 from src.services import BaseService
 
@@ -29,3 +29,10 @@ class EventConfirmationService(BaseService):
         return (
             {"message": "Event confirmation was deleted successfully."} if isinstance(obj, EventConfirmation) else obj
         )
+
+    async def notify_performance_participants(self, event_id: UUID, performance_id: UUID) -> None:
+        performance_manager = PerformanceManager(session=self.session)
+        participants_ids = await performance_manager.get_performance_participants_ids(performance_id=performance_id)
+
+        confirmations_info = [{"event_id": event_id, "user_id": user_id} for user_id in participants_ids]
+        await self.event_confirmation_manager.insert_many(data=confirmations_info)
