@@ -14,7 +14,7 @@ repos:
       - id: check-symlinks
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.9.9"
+    rev: "v0.11.2"
     hooks:
       - id: ruff
         args: [ "--fix" ]
@@ -28,3 +28,8 @@ repos:
     rev: "6.0.1"
     hooks:
       - id: isort
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: "0.6.10"
+    hooks:
+      - id: uv-lock

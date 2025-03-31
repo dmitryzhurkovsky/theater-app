@@ -2,19 +2,29 @@
 
 ## Local development
 
+### Install uv
+
+```shell
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+or
+```shell
+pip install uv
+```
+
 ### Install dependencies
 
 ```shell
 cd backend/
-poetry shell
-poetry install
+uv sync
+source .venv/bin/activate
 ```
 
 ### Install pre-commit hooks
 
 ```shell
-poetry run pre-commit install
-poetry run pre-commit autoupdate
+uv run pre-commit install
+uv run pre-commit autoupdate
 pre-commit install
 ```
 

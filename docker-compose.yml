@@ -5,7 +5,8 @@ services:
     build:
       context: ./backend
       dockerfile: ./build/Dockerfile
-      target: dev
+      args:
+        BUILD_ENV: "dev"
     image: theater/backend
     container_name: theater_api
     command:
@@ -19,6 +20,11 @@ services:
     depends_on:
       theater_db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "localhost:5000/api/v1/healthcheck/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
 
   theater_migration:
     build:
