@@ -6,6 +6,7 @@ authors = [
     {name = "Maksim Suprun", email = "ms.pydev@gmail.com"},
     {name = "Artur Leshko", email = "artur.leshko.01@gmail.com"},
     {name = "Nikita Chebotarevskiy", email = "mikita.chebotarevskiy@gmail.com"},
+    {name = "Vladislav Baranov", email = "vladislavbaranov1996@gmail.com"},
 ]
 requires-python = "<3.13,>=3.11"
 dependencies = [
