@@ -31,6 +31,8 @@ class EventRead(EventBase):
 
 
 class EventCreate(EventBase):
+    participants: list[UUID] | None = None
+
     @field_validator("date", mode="after")
     def validate_date(cls, value: datetime) -> datetime:
         return validate_day_is_not_previous(day=value, error_msg="date field cannot contain previous date")

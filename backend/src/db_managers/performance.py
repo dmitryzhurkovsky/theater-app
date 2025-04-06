@@ -1,8 +1,7 @@
 from datetime import date
 from typing import Sequence
-from uuid import UUID
 
-from sqlalchemy import Subquery, all_, and_, func, select, union_all
+from sqlalchemy import Subquery, all_, and_, func, select
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.expression import literal_column
 
@@ -62,15 +61,3 @@ class PerformanceManager(BaseDatabaseManager):
             .group_by(PerformanceRole.id)
             .subquery()
         )
-
-    async def get_performance_participants_ids(self, performance_id: UUID) -> Sequence[UUID]:
-        """Method that returns director_id along with actors ids who playing in the performance."""
-        stmt1 = select(self.model.director_id.label("user_id")).where(self.model.id == performance_id)
-        stmt2 = (
-            select(UserPerformanceRoleRelationship.user_id)
-            .join(PerformanceRole)
-            .where(PerformanceRole.performance_id == performance_id)
-        )
-
-        result = await self.session.execute(union_all(stmt1, stmt2))
-        return result.scalars().all()
