@@ -1,11 +1,15 @@
 from datetime import date
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Date, Enum
 from sqlalchemy.dialects import postgresql as pg
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.enums import GenderTypeEnum, UserRoleTypeEnum
 from src.models import BaseModel, TimestampAbstractModel
+
+if TYPE_CHECKING:
+    from src.models.performance_role import PerformanceRole
 
 
 class User(BaseModel, TimestampAbstractModel):
@@ -29,6 +33,9 @@ class User(BaseModel, TimestampAbstractModel):
     telegram_link: Mapped[str] = mapped_column(unique=True, nullable=True)
     instagram_link: Mapped[str] = mapped_column(unique=True, nullable=True)
     unavailable_dates: Mapped[list[date]] = mapped_column(pg.ARRAY(Date), nullable=True)
+    theatrical_roles: Mapped[list["PerformanceRole"]] = relationship(
+        back_populates="actors", secondary="user_performance_role_relationship", lazy="selectin"
+    )
 
     def has_role(self, role: UserRoleTypeEnum) -> bool:
         return role in self.user_roles

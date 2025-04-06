@@ -2,14 +2,22 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
-from src.core.deps import AuthenticatedUser, UserServiceDep
+from src.core.deps import AuthenticatedUser, UserServiceDep, UserServiceWithConfigDep
+from src.core.enums import UserRoleTypeEnum
 from src.core.permissions import (
     can_create_user,
     can_delete_user,
     can_edit_user,
     required_roles,
 )
-from src.core.schemas import MessageResponseSchema, UserCreate, UserRead, UserUpdate
+from src.core.schemas import (
+    MessageResponseSchema,
+    UserCreate,
+    UserRead,
+    UserSearchQueryParameters,
+    UsersPaginationResponseSchema,
+    UserUpdate,
+)
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -22,6 +30,17 @@ async def create_user(user: UserCreate, service: UserServiceDep):
 @router.get("/me", response_model=UserRead, summary="Get current user")
 async def get_user_me(user: AuthenticatedUser):
     return user
+
+
+@router.get(
+    "/search",
+    response_model=UsersPaginationResponseSchema,
+    dependencies=[
+        Depends(required_roles([UserRoleTypeEnum.DIRECTOR, UserRoleTypeEnum.ADMIN, UserRoleTypeEnum.SUPER_ADMIN]))
+    ],
+)
+async def search_users(service: UserServiceWithConfigDep, query_parameters: UserSearchQueryParameters = Depends()):
+    return await service.search_users(query_parameters)
 
 
 @router.get("/{user_id}", response_model=UserRead, dependencies=[Depends(required_roles())])

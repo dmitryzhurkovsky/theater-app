@@ -8,6 +8,7 @@ from src.models import BaseModel
 
 if TYPE_CHECKING:
     from src.models.performance import Performance
+    from src.models.users import User
 
 
 class PerformanceRole(BaseModel):
@@ -19,3 +20,6 @@ class PerformanceRole(BaseModel):
         ForeignKey("performances.id", ondelete="CASCADE"), nullable=False, index=True
     )
     performance: Mapped["Performance"] = relationship(back_populates="performance_roles")
+    actors: Mapped[list["User"]] = relationship(
+        back_populates="theatrical_roles", secondary="user_performance_role_relationship"
+    )

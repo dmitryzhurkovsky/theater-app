@@ -81,11 +81,11 @@ EventConfirmationServiceDep = Annotated[
 ]
 NotificationServiceDep = Annotated[NotificationService, Depends(get_service(service_cls=NotificationService))]
 
+UserServiceWithConfigDep = Annotated[UserService, Depends(get_service(service_cls=UserService, with_config=True))]
 PerformanceServiceWithConfigDep = Annotated[
     PerformanceService, Depends(get_service(service_cls=PerformanceService, with_config=True))
 ]
 EventServiceWithConfigDep = Annotated[EventService, Depends(get_service(service_cls=EventService, with_config=True))]
-
 
 AuthenticatedUser = Annotated[User, Depends(get_auth_user)]
 GoogleOAuthFlow = Annotated[Flow, Depends(get_google_oauth_flow)]

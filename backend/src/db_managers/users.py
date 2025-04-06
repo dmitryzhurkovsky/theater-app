@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy.sql import Select
+from sqlalchemy.sql import Select, or_
 
 from src.core.database.utils import get_by
 from src.core.exceptions.base import NotFoundError
@@ -30,3 +30,16 @@ class UserManager(BaseDatabaseManager):
         if not result and raise_error:
             raise NotFoundError(detail=f"{self.model.__name__} object with {filters=} not found")
         return result
+
+    def search_users_by_full_name(self, full_name: str | None = None) -> Select:
+        stmt = self.base_query
+
+        if full_name:
+            stmt = stmt.where(
+                or_(
+                    (self.model.first_name + " " + self.model.last_name).ilike(f"%{full_name}%"),
+                    (self.model.last_name + " " + self.model.first_name).ilike(f"%{full_name}%"),
+                )
+            )
+
+        return stmt.order_by(self.model.last_name.asc(), self.model.first_name.asc())

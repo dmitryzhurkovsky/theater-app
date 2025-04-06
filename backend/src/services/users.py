@@ -1,11 +1,18 @@
-from typing import Any, Never
+from typing import Any, Never, cast
 from uuid import UUID
 
 import structlog
 from fastapi import HTTPException, status
 
 from src.core.exceptions.auth_exceptions import UserAlreadyExistsException
-from src.core.schemas import UserCreate, UserCreateWithOAuth, UserRegister, UserUpdate
+from src.core.schemas import (
+    UserCreate,
+    UserCreateWithOAuth,
+    UserRegister,
+    UserSearchQueryParameters,
+    UsersPaginationResponseSchema,
+    UserUpdate,
+)
 from src.db_managers import UserManager
 from src.models import User
 from src.services.base import BaseService
@@ -68,3 +75,13 @@ class UserService(BaseService):
             email=user_info.get("email", ""),
         )
         return await self.create_user(user=user)
+
+    async def search_users(self, query_parameters: UserSearchQueryParameters) -> UsersPaginationResponseSchema:
+        stmt = self.user_manager.search_users_by_full_name(full_name=query_parameters.full_name)
+
+        return await super().get_paginated_response(
+            model=self.user_manager.model,
+            stmt=stmt,
+            query_parameters=query_parameters,
+            schema=UsersPaginationResponseSchema,
+        )

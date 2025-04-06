@@ -4,6 +4,8 @@ from src.core.schemas.user.base import (
     UserCreateWithOAuth,
     UserRead,
     UserRegister,
+    UserSearchQueryParameters,
+    UsersPaginationResponseSchema,
     UserUpdate,
 )
 
@@ -14,4 +16,6 @@ __all__ = (
     "UserRead",
     "UserUpdate",
     "UserRegister",
+    "UserSearchQueryParameters",
+    "UsersPaginationResponseSchema",
 )

@@ -5,7 +5,9 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
 from src.core.enums import GenderTypeEnum, UserRoleTypeEnum
+from src.core.schemas.common import PaginationResponseSchema, QueryParameters
 from src.core.schemas.common_validators import validate_day_is_not_previous
+from src.core.schemas.performance_role import PerformanceRoleRead
 
 
 class UserBase(BaseModel):
@@ -30,7 +32,7 @@ class UserRead(UserBase):
     created_at: datetime
     updated_at: datetime
 
-    # TODO: add theatrical_roles
+    theatrical_roles: list[PerformanceRoleRead]
 
 
 class UserCreate(UserBase):
@@ -86,3 +88,11 @@ class UserRegister(UserBase):
             raise ValueError("Password must contain at least one special character")
 
         return value
+
+
+class UserSearchQueryParameters(QueryParameters):
+    full_name: str | None = None
+
+
+class UsersPaginationResponseSchema(PaginationResponseSchema):
+    data: list[UserRead]
