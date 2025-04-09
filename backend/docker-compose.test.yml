@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   theater_api:
     container_name: theater_api_test
