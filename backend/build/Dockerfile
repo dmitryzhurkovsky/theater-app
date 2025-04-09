@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim AS deps
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS deps
 
 ARG BUILD_ENV=prod
 ENV UV_COMPILE_BYTECODE=1
@@ -12,15 +12,18 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project $( [ "$BUILD_ENV" = "prod" ] && echo "--no-group dev" )
 
-ADD . /app
+COPY . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-project $( [ "$BUILD_ENV" = "prod" ] && echo "--no-group dev" )
 
-FROM python:3.11-slim-bookworm AS base
+FROM python:3.12-slim-bookworm AS base
 
 ENV APP_NAME    backend
 ENV PREFIX      /opt/theater
 ENV PREFIX_APP  ${PREFIX}/${APP_NAME}
+
+ENV USER_GROUP=theater
+ENV USER=theater
 
 ENV UVICORN_HOST    0.0.0.0
 ENV UVICORN_PORT    5000
@@ -31,14 +34,14 @@ ENV PYTHONUNBUFFERED 1
 
 RUN groupadd \
       -g 20001 \
-      theater \
+      $USER_GROUP \
   && \
     useradd \
       -l \
       -M \
       -u 10001 \
-      -g theater \
-      theater
+      -g $USER_GROUP \
+      $USER
 
 WORKDIR ${PREFIX_APP}
 
@@ -47,7 +50,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=deps --chown=theater:theater /app /app
+COPY --from=deps --chown=$USER:$USER_GROUP /app /app
 ENV PATH="/app/.venv/bin:$PATH"
 
 COPY ./build/docker-entrypoint.sh /
@@ -59,4 +62,4 @@ FROM base
 
 ENV PYTHONDONTWRITEBYTECODE 1
 
-USER theater
+USER $USER

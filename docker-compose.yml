@@ -1,25 +1,26 @@
-version: "3.8"
+x-common-service: &common-service
+  build:
+    context: ./backend
+    dockerfile: ./build/Dockerfile
+    args:
+      BUILD_ENV: "dev"
+  image: theater/backend
+  env_file:
+    - ./backend/.env.dev
+  volumes:
+    - ./backend:/opt/theater/backend
+  depends_on:
+    theater_db:
+      condition: service_healthy
 
 services:
   theater_api:
-    build:
-      context: ./backend
-      dockerfile: ./build/Dockerfile
-      args:
-        BUILD_ENV: "dev"
-    image: theater/backend
+    <<: *common-service
     container_name: theater_api
     command:
       - --reload
     ports:
       - "8015:5000"
-    volumes:
-      - ./backend:/opt/theater/backend
-    env_file:
-      - ./backend/.env.dev
-    depends_on:
-      theater_db:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "localhost:5000/api/v1/healthcheck/"]
       interval: 30s
@@ -27,20 +28,10 @@ services:
       retries: 5
 
   theater_migration:
-    build:
-      context: ./backend
-      dockerfile: ./build/Dockerfile
-    image: theater/backend
+    <<: *common-service
     container_name: theater_migration
     command:
       - migration
-    volumes:
-      - ./backend:/opt/theater/backend
-    env_file:
-      - ./backend/.env.dev
-    depends_on:
-      theater_db:
-        condition: service_healthy
 
   theater_db:
     image: postgres:15.3-alpine
