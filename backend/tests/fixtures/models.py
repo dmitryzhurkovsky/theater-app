@@ -4,8 +4,9 @@ import pytest
 import pytest_asyncio
 from faker import Faker
 
-from src.models import Event, Performance, PerformanceRole, User
+from src.models import Event, EventConfirmation, Performance, PerformanceRole, User
 from tests.factories.models import (
+    EventConfirmationFactory,
     EventFactory,
     PerformanceFactory,
     PerformanceRoleFactory,
@@ -43,3 +44,8 @@ async def event() -> AsyncGenerator[Event, None]:
 @pytest_asyncio.fixture
 async def event_for_performance(performance: Performance) -> AsyncGenerator[Event, None]:
     yield await EventFactory.create_async(performance_id=performance.id)
+
+
+@pytest_asyncio.fixture
+async def event_confirmation(event: Event, user: User) -> AsyncGenerator[EventConfirmation, None]:
+    yield await EventConfirmationFactory.create_async(event_id=event.id, user_id=user.id)

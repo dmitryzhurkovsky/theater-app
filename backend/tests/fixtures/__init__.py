@@ -9,6 +9,7 @@ from tests.fixtures.http_client import (
 )
 from tests.fixtures.models import (
     event,
+    event_confirmation,
     event_for_performance,
     password,
     performance,
@@ -30,6 +31,7 @@ __all__ = (
     "performance_role",
     "user",
     "event",
+    "event_confirmation",
     "event_for_performance",
     "session",
     "set_async_session_for_factories",
