@@ -4,8 +4,10 @@ import pytest
 import pytest_asyncio
 from faker import Faker
 
-from src.models import Performance, PerformanceRole, User
+from src.models import Event, EventConfirmation, Performance, PerformanceRole, User
 from tests.factories.models import (
+    EventConfirmationFactory,
+    EventFactory,
     PerformanceFactory,
     PerformanceRoleFactory,
     UserFactory,
@@ -20,17 +22,30 @@ def password() -> Generator[str | None]:
 
 @pytest_asyncio.fixture
 async def user(password: str) -> AsyncGenerator[User, None]:
-    user = await UserFactory.create_async(password=password)
-    yield user
+    yield await UserFactory.create_async(password=password)
 
 
 @pytest_asyncio.fixture
 async def performance(user: User) -> AsyncGenerator[Performance, None]:
-    performance = await PerformanceFactory.create_async(director_id=user.id)
-    yield performance
+    yield await PerformanceFactory.create_async(director_id=user.id)
 
 
 @pytest_asyncio.fixture
 async def performance_role(performance: Performance) -> AsyncGenerator[PerformanceRole, None]:
     performance_role = await PerformanceRoleFactory.create_async(performance_id=performance.id)
     yield performance_role
+
+
+@pytest_asyncio.fixture
+async def event() -> AsyncGenerator[Event, None]:
+    yield await EventFactory.create_async()
+
+
+@pytest_asyncio.fixture
+async def event_for_performance(performance: Performance) -> AsyncGenerator[Event, None]:
+    yield await EventFactory.create_async(performance_id=performance.id)
+
+
+@pytest_asyncio.fixture
+async def event_confirmation(event: Event, user: User) -> AsyncGenerator[EventConfirmation, None]:
+    yield await EventConfirmationFactory.create_async(event_id=event.id, user_id=user.id)

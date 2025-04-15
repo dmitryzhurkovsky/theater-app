@@ -53,6 +53,8 @@ from src.core.schemas.user import (
     UserCreateWithOAuth,
     UserRead,
     UserRegister,
+    UserSearchQueryParameters,
+    UsersPaginationResponseSchema,
     UserUpdate,
 )
 from src.core.schemas.user_performance_role import (
@@ -94,6 +96,8 @@ __all__ = (
     "UserRead",
     "UserUpdate",
     "UserRegister",
+    "UserSearchQueryParameters",
+    "UsersPaginationResponseSchema",
     "UserPerformanceRoleBase",
     "UserPerformanceRoleRead",
     "UserPerformanceRoleUpdate",

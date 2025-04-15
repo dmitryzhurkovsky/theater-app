@@ -1,7 +1,13 @@
 from datetime import date, datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    PositiveInt,
+    field_validator,
+    model_validator,
+)
 
 from src.core.enums import EventTypeEnum, StatusTypeEnum
 from src.core.exceptions import QueryParamsBuilderException
@@ -16,7 +22,7 @@ class EventBase(BaseModel):
     place: str = "scena"
     event_type: EventTypeEnum
     performance_id: UUID | None = None
-    duration: int = Field(default=60, gt=0)
+    duration: PositiveInt = 60
 
 
 class EventRead(EventBase):
@@ -31,18 +37,27 @@ class EventRead(EventBase):
 
 
 class EventCreate(EventBase):
+    participants: list[UUID] | None = None
+
     @field_validator("date", mode="after")
     def validate_date(cls, value: datetime) -> datetime:
         return validate_day_is_not_previous(day=value, error_msg="date field cannot contain previous date")
 
 
-class EventUpdate(EventCreate):
+class EventUpdate(EventBase):
     name: str | None = None
     date: datetime | None = None
     place: str | None = None
     event_type: EventTypeEnum | None = None
     status: StatusTypeEnum | None = None
-    duration: int | None = None
+    duration: PositiveInt | None = None
+
+    @field_validator("date", mode="after")
+    def validate_date(cls, value: datetime | None) -> datetime | None:
+        if value:
+            return validate_day_is_not_previous(day=value, error_msg="date field cannot contain previous date")
+
+        return value
 
 
 class EventQueryParameters(QueryParameters):

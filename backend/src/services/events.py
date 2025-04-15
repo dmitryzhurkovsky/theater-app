@@ -1,5 +1,7 @@
+from typing import cast
 from uuid import UUID
 
+from src.core.exceptions import OperationFailedError
 from src.core.schemas import (
     EventCreate,
     EventPaginationResponseSchema,
@@ -29,13 +31,22 @@ class EventService(BaseService):
         )
 
     async def create_event(self, event: EventCreate) -> Event:
-        event = await self.event_manager.create(event.model_dump())
+        event_data = event.model_dump()
+        participants = event_data.pop("participants", [])
+        event = await self.event_manager.create(event_data)
 
-        if event.performance_id:
-            event_confirmation_service = EventConfirmationService(session=self.session)
-            await event_confirmation_service.notify_performance_participants(
-                event_id=event.id, performance_id=event.performance_id
-            )
+        try:
+            if participants:
+                event_confirmation_service = EventConfirmationService(session=self.session)
+                await event_confirmation_service.notify_event_participants(
+                    event_id=cast(UUID, event.id), participants=participants
+                )
+                await self.session.refresh(event)
+        except OperationFailedError as ex:
+            await self.session.delete(event)
+            await self.session.commit()
+
+            raise ex
 
         return event
 

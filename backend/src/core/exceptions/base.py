@@ -29,7 +29,7 @@ class BaseError(HTTPException):
             status_code=status_code if status_code else self.status_code,
             detail=detail if detail else self.detail,
             *args,
-            **kwargs
+            **kwargs,
         )
 
 
