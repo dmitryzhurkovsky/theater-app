@@ -81,6 +81,14 @@ class AuthSettings(BaseAppSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: timedelta = timedelta(days=15)
 
 
+class MailjetSettings(BaseAppSettings):
+    MJ_API_KEY_PUBLIC: str = env.str("MJ_API_KEY_PUBLIC", "mj_api_key_public")
+    MJ_API_KEY_PRIVATE: str = env.str("MJ_API_KEY_PRIVATE", "mj_api_key_private")
+    MJ_CLIENT_VERSION: str = env.str("MJ_CLIENT_VERSION", "v3.1")
+    MJ_RESET_PASSWORD_TEMPLATE_ID: int = env.int("MJ_RESET_PASSWORD_TEMPLATE_ID", "1")
+    MJ_SENDER_EMAIL: str = env.str("MJ_SENDER_EMAIL", "user@example.com")
+
+
 class Settings(BaseAppSettings):
     # Core settings
     VERSION: str = "1.0.0"
@@ -88,6 +96,7 @@ class Settings(BaseAppSettings):
     ENDPOINTS_SERVICE_PREFIX: str = env.str("ENDPOINTS_SERVICE_PREFIX", "/api")
     DEBUG: bool = env.bool("DEBUG", "False")
     ENVIRONMENT: EnvironmentEnum = env.str("ENVIRONMENT", EnvironmentEnum.DEV.value)
+    MOBILE_APP_BASE_URL: str = env.str("MOBILE_APP_BASE_URL", "mobile-app-base-url")
 
     # Swagger settings
     DOCS_URL: str = f"{ENDPOINTS_SERVICE_PREFIX}/docs"
@@ -108,3 +117,6 @@ class Settings(BaseAppSettings):
 
     # Auth settings
     AUTH: AuthSettings = AuthSettings()
+
+    # Mailjet settings
+    MAILJET: MailjetSettings = MailjetSettings()

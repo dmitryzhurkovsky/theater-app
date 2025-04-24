@@ -2,9 +2,8 @@ from typing import Any
 
 import structlog
 from jwt import PyJWTError
-from sqlalchemy.exc import IntegrityError
 
-from src.core.enums.jwt_token import TokenTypeEnum
+from src.core.enums import TokenTypeEnum
 from src.core.exceptions.auth_exceptions import InvalidJWTException
 from src.core.exceptions.base import NotFoundError
 from src.db_managers import UserManager

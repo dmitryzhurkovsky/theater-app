@@ -28,7 +28,7 @@ class UserRegisterSchemaFactory(UserBaseSchemaFactory):
         return cls.__faker__.password()
 
 
-class UserCreateSchemaFactory(UserBaseSchemaFactory):
+class UserCreateSchemaFactory(UserRegisterSchemaFactory):
     __model__ = UserCreate
 
     @classmethod

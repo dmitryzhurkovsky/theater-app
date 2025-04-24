@@ -47,12 +47,15 @@ from src.core.schemas.request_log import (
     RequestLogHttpSchema,
     RequestLogSchema,
 )
+from src.core.schemas.token import TokenData, TokenInfo
 from src.core.schemas.user import (
     UserBase,
     UserCreate,
     UserCreateWithOAuth,
+    UserForgotPassword,
     UserRead,
     UserRegister,
+    UserResetPasswordEmailData,
     UserUpdate,
 )
 from src.core.schemas.user_performance_role import (
@@ -91,9 +94,11 @@ __all__ = (
     "UserBase",
     "UserCreate",
     "UserCreateWithOAuth",
+    "UserForgotPassword",
     "UserRead",
     "UserUpdate",
     "UserRegister",
+    "UserResetPasswordEmailData",
     "UserPerformanceRoleBase",
     "UserPerformanceRoleRead",
     "UserPerformanceRoleUpdate",
@@ -107,4 +112,6 @@ __all__ = (
     "PerformanceRoleCreate",
     "PerformanceRoleRead",
     "PerformanceRoleUpdate",
+    "TokenData",
+    "TokenInfo",
 )
