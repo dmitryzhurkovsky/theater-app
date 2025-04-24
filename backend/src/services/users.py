@@ -1,14 +1,23 @@
-from typing import Any, Never
+from typing import Any, Never, cast
 from uuid import UUID
 
 import structlog
 from fastapi import HTTPException, status
+from pydantic import EmailStr
 
+from src.core.enums import TokenTypeEnum
 from src.core.exceptions.auth_exceptions import UserAlreadyExistsException
-from src.core.schemas import UserCreate, UserCreateWithOAuth, UserRegister, UserUpdate
+from src.core.schemas import (
+    UserCreate,
+    UserCreateWithOAuth,
+    UserRegister,
+    UserResetPasswordEmailData,
+    UserUpdate,
+)
 from src.db_managers import UserManager
 from src.models import User
-from src.services.base import BaseService
+from src.services import BaseService, SecurityService
+from src.utils import build_reset_password_link
 from src.utils.security.jwt_token import JWTTokenBuilder
 from src.utils.security.password_handler import make_password_hash, verify_password
 
@@ -68,3 +77,25 @@ class UserService(BaseService):
             email=user_info.get("email", ""),
         )
         return await self.create_user(user=user)
+
+    async def get_reset_password_email_data(self, email: str) -> UserResetPasswordEmailData | None:
+        if user := await self.user_manager.get_by(filters={"email": email}, raise_error=False):
+            LOG.info(f"Reset password for user {user.id}")
+            reset_password_token = self.jwt_token_builder.create_password_reset_token(email=email)
+
+            return UserResetPasswordEmailData(
+                first_name=cast(str, user.first_name),
+                last_name=cast(str, user.last_name),
+                user_email=cast(EmailStr, user.email),
+                reset_password_link=build_reset_password_link(token=reset_password_token),
+            )
+
+        LOG.warning(f"Trying to reset password for email={email}, which is not registered.")
+        return None
+
+    async def reset_password(self, token: str, new_password: str) -> None:
+        security_service = SecurityService(session=self.session)
+        token_payload = security_service.get_token_payload(token=token, token_type=TokenTypeEnum.RESET_PASSWORD)
+        user = await self.user_manager.get_by(filters={"email": token_payload.get("sub")})
+
+        await self.user_manager.update(id_=user.id, update_data={"password": make_password_hash(new_password)})

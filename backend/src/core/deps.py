@@ -11,9 +11,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.config.settings import settings
 from src.core.database.db import postgres_async_session
 from src.core.schemas import ControllerConfig
+from src.infrastructure import MailjetEmailBuilder, MailjetEmailClient
 from src.models import User
 from src.services import (
     BaseService,
+    EmailService,
     EventConfirmationService,
     EventService,
     NotificationService,
@@ -54,6 +56,10 @@ def get_security_service(session: AsyncSession = Depends(with_async_session)) ->
     return SecurityService(session=session)
 
 
+def get_email_service() -> EmailService:
+    return EmailService(email_builder=MailjetEmailBuilder(), email_client=MailjetEmailClient())
+
+
 async def get_auth_user(
     access_token: str = Depends(oauth2_scheme),
     security_service: SecurityService = Depends(get_security_service),
@@ -90,3 +96,4 @@ EventServiceWithConfigDep = Annotated[EventService, Depends(get_service(service_
 AuthenticatedUser = Annotated[User, Depends(get_auth_user)]
 GoogleOAuthFlow = Annotated[Flow, Depends(get_google_oauth_flow)]
 SecurityServiceDep = Annotated[SecurityService, Depends(get_security_service)]
+EmailServiceDep = Annotated[EmailService, Depends(get_email_service)]

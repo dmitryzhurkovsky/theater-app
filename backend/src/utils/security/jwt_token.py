@@ -5,7 +5,7 @@ from typing import Any
 import jwt
 
 from src.core.config.settings import settings
-from src.core.enums.jwt_token import TokenTypeEnum
+from src.core.enums import TokenTypeEnum
 from src.models import User
 
 
@@ -126,6 +126,21 @@ class JWTTokenBuilder:
         return self.create_jwt_token(
             payload={"type": TokenTypeEnum.REFRESH.value, "sub": user.email},
             expire=self.expire_days,
+        )
+
+    def create_password_reset_token(self, email: str) -> str:
+        """
+                Creates a JWT password reset token for the given email.
+
+                Args:
+                    email (str): The email of the user who wants to reset password.
+
+                Returns:
+        `           str: Tne encoded password reset token.
+        """
+        return self.create_jwt_token(
+            payload={"type": TokenTypeEnum.RESET_PASSWORD.value, "sub": email},
+            expire=self.expire_minutes,
         )
 
     def get_tokens(self, user: User) -> dict[str, str]:

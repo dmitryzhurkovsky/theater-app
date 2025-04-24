@@ -4,6 +4,7 @@ from src.core.enums.environment import EnvironmentEnum
 from src.core.enums.event_types import EventTypeEnum
 from src.core.enums.gender import GenderTypeEnum
 from src.core.enums.genre import GenreTypeEnum
+from src.core.enums.jwt_token import TokenTypeEnum
 from src.core.enums.log_level import LogLevelEum
 from src.core.enums.notification_types import NotificationTypeEnum
 from src.core.enums.sort_order import SortOrder
@@ -16,6 +17,7 @@ __all__ = (
     "EnvironmentEnum",
     "GenreTypeEnum",
     "GenderTypeEnum",
+    "TokenTypeEnum",
     "LogLevelEum",
     "UserRoleTypeEnum",
     "SortOrder",

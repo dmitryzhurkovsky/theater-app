@@ -63,3 +63,14 @@ class UserUpdate(UserBase, UserAdditionalInfo):
 
 class UserRegister(UserBase):
     password: Annotated[str, AfterValidator(check_password)]
+
+
+class UserForgotPassword(BaseModel):
+    email: EmailStr
+
+
+class UserResetPasswordEmailData(BaseModel):
+    first_name: str
+    last_name: str
+    user_email: EmailStr
+    reset_password_link: str
